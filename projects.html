@@ -29,7 +29,7 @@
 
   <main>
     <h1>Projects</h1>
-    <p>Tools and systems I've built to solve real problems in production environments.</p>
+    <p>Tools and systems I've built to solve real problems in production environments. Much of my strongest work is proprietary &mdash; built for internal use and not publicly available. The open-source projects below are representative; the case studies at the bottom reflect the kind of operational work that doesn't live on GitHub.</p>
 
     <div class="project-list" style="margin-top: 2rem;">
 
@@ -111,9 +111,100 @@
         <a href="https://github.com/nathannncurtis/File-Processor" target="_blank" rel="noopener" class="project-link">View on GitHub &rarr;</a>
       </div>
 
+      <!-- Study Aggregator -->
+      <div class="project-card" id="study-aggregator">
+        <h3><a href="https://github.com/nathannncurtis/Study-Aggregator" target="_blank" rel="noopener">Study Aggregator</a></h3>
+
+        <p class="project-detail">
+          <strong>Problem:</strong> Processing DICOM medical imaging studies from CDs, ZIP archives, and network drives is tedious and error-prone. Staff need organized patient reports quickly, and existing tools don't handle the variety of formats, encryption, and edge cases found in the real world.
+        </p>
+
+        <p class="project-detail">
+          <strong>Approach:</strong> Built a Windows desktop application that reads DICOM files from directories, encrypted/unencrypted ZIPs (nested up to 10 levels), and optical drives. Intelligently merges patient studies using ID, name, and DOB matching with conflict detection. Outputs formatted reports via clipboard or PDF. Integrates into the Windows right-click context menu for seamless workflow. Multithreaded scanning at 4x CPU cores (max 32 threads) for fast processing.
+        </p>
+
+        <p class="project-detail">
+          <strong>Outcome:</strong> Distributed via installer with auto-update support. Used daily in a production environment to process incoming medical imaging studies. Handles edge cases like extensionless DICOM files, AES-encrypted archives, and mixed-format directories.
+        </p>
+
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">DICOM</span>
+          <span class="tag">Multithreading</span>
+          <span class="tag">Inno Setup</span>
+        </div>
+
+        <a href="https://github.com/nathannncurtis/Study-Aggregator" target="_blank" rel="noopener" class="project-link">View on GitHub &rarr;</a>
+      </div>
+
     </div>
 
-    <!-- Add more projects by duplicating a project-card block above -->
+    <div class="section" style="margin-top: 3.5rem;">
+      <p class="section-label">Operational Case Studies</p>
+      <p>Sanitized summaries of proprietary work. No internal details &mdash; just the shape of the problem and what I did about it.</p>
+
+      <div class="project-list" style="margin-top: 1.5rem;">
+
+        <!-- Case Study: Document Processing Automation -->
+        <div class="project-card" id="case-doc-processing">
+          <h3>Document Processing Automation System</h3>
+
+          <p class="project-detail">
+            <strong>Context:</strong> High-volume litigation support environment processing thousands of documents daily across multiple formats, sources, and departments.
+          </p>
+
+          <p class="project-detail">
+            <strong>Problem:</strong> Document intake, classification, and conversion were heavily manual. Staff were hand-sorting files, running individual conversions, and manually tracking job status. Bottlenecks compounded during peak volume and errors were common.
+          </p>
+
+          <p class="project-detail">
+            <strong>Approach:</strong> Designed and built an end-to-end automation pipeline covering OCR, format conversion, file classification, and job tracking. Integrated with existing network storage and production hardware. Built operator-facing tools for monitoring and intervention.
+          </p>
+
+          <p class="project-detail">
+            <strong>Outcome:</strong> Reduced manual processing time significantly. Eliminated entire categories of errors. System runs daily with minimal oversight.
+            <!-- UPDATE: Add specific metrics if available -->
+          </p>
+
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">OCR</span>
+            <span class="tag">Automation</span>
+            <span class="tag">Internal</span>
+          </div>
+        </div>
+
+        <!-- Case Study: Production Environment Stabilization -->
+        <div class="project-card" id="case-env-stabilization">
+          <h3>Production Environment Stabilization</h3>
+
+          <p class="project-detail">
+            <strong>Context:</strong> Mixed production environment with networked printers, shared storage, Active Directory, and multiple interdependent internal tools.
+          </p>
+
+          <p class="project-detail">
+            <strong>Problem:</strong> Recurring failures across the production floor &mdash; print jobs stalling, network paths breaking, tools losing connection to shared resources. No single root cause; issues spanned DNS, firewall rules, NAS permissions, printer firmware, and application configuration. Previous attempts to fix individual symptoms hadn't addressed the systemic fragility.
+          </p>
+
+          <p class="project-detail">
+            <strong>Approach:</strong> Mapped the full environment: infrastructure, hardware, software dependencies, and user workflows. Identified failure patterns across layers. Rebuilt DNS/DHCP configuration, restructured NAS permissions and backup policies, updated firewall rules, performed full maintenance on production printers, and standardized application deployment.
+          </p>
+
+          <p class="project-detail">
+            <strong>Outcome:</strong> Environment stabilized. Recurring failures resolved. Established monitoring and documentation to prevent regression.
+            <!-- UPDATE: Add specific metrics if available -->
+          </p>
+
+          <div class="project-tags">
+            <span class="tag">Infrastructure</span>
+            <span class="tag">DNS/DHCP</span>
+            <span class="tag">Hardware</span>
+            <span class="tag">Internal</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </main>
 
   <footer>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nathan Curtis</title>
-  <meta name="description" content="Process Development, Automation, and Technical Operations.">
+  <meta name="description" content="Process Development, Automation, Systems & Infrastructure, and Technical Operations.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -27,20 +27,62 @@
     </div>
   </nav>
 
+  <div class="hero-wrapper">
+    <div class="hero-glow"></div>
+    <main class="hero-main">
+      <div class="hero">
+        <p class="hero-tag">Process Development &middot; Automation &middot; Systems &amp; Infrastructure &middot; Technical Operations</p>
+        <h1>Nathan Curtis</h1>
+        <p class="intro">
+          I work at the intersection of operations, automation, and infrastructure &mdash; building tools, diagnosing failures across software, hardware, and network layers, and connecting workflows across departments. When systems break or processes stall, I'm the one brought in to map the problem and implement a fix.
+        </p>
+        <div class="hero-links">
+          <a href="projects.html" class="btn btn-primary">View Projects</a>
+          <a href="mailto:nathan@nathancurtis.to" class="btn btn-ghost">Get in Touch</a>
+        </div>
+      </div>
+    </main>
+  </div>
+
   <main>
-    <div class="hero">
-      <h1>Nathan Curtis</h1>
-      <p class="subtitle">Process Development &middot; Automation &middot; Technical Operations</p>
-      <p class="intro">
-        I work at the intersection of operations, automation, and infrastructure &mdash; building tools, diagnosing failures, and connecting workflows across departments. I turn messy processes into reliable systems.
-      </p>
+    <div class="section">
+      <p class="section-label">What I Work Across</p>
+      <div class="capability-domains">
+
+        <div class="domain">
+          <h3>Automation &amp; Workflows</h3>
+          <p>OCR pipelines, batch processing, document classification, file conversion systems, job scheduling. If someone is doing it by hand more than twice, I'm already writing the script.</p>
+        </div>
+
+        <div class="domain">
+          <h3>Systems &amp; Infrastructure</h3>
+          <p>Active Directory, Group Policy, DNS/DHCP, NAS deployment (RAID, permissions, backups), firewall configuration, network segmentation. I administer the environment the software lives in.</p>
+        </div>
+
+        <div class="domain">
+          <h3>Production Hardware</h3>
+          <p>Full maintenance kits on Kyocera production printers. Fuser, drum, and feed diagnostics. Hardware integration into imaging workflows. This isn't side work &mdash; it's part of why I'm effective.</p>
+        </div>
+
+        <div class="domain">
+          <h3>Tooling &amp; Interfaces</h3>
+          <p>Internal dashboards, AG Grid inline editing, SQL-driven stat tracking, Electron apps, PyQt5 desktop tools. Built for the people who actually use them.</p>
+        </div>
+
+        <div class="domain">
+          <h3>Technical Operations</h3>
+          <p>Cross-departmental workflow design, system diagnostics across layers, environment stabilization. I'm the person brought in when something is broken and nobody knows where to start.</p>
+        </div>
+
+      </div>
     </div>
 
     <div class="section">
-      <p class="section-label">Featured Projects</p>
-      <div class="project-list">
+      <p class="section-label">Selected Projects</p>
+      <div class="project-grid">
 
         <div class="project-card">
+          <div class="project-card-accent"></div>
           <h3><a href="projects.html#coil">Coil</a></h3>
           <p class="project-desc">An opinionated Python-to-executable compiler. Directory in, standalone exe out &mdash; with built-in decompilation to recover your source when you need it.</p>
           <div class="project-tags">
@@ -51,6 +93,7 @@
         </div>
 
         <div class="project-card">
+          <div class="project-card-accent"></div>
           <h3><a href="projects.html#feather">Feather</a></h3>
           <p class="project-desc">A lightweight image optimizer for production environments. Dynamically resizes and compresses TIFF and JPEG files with multithreaded batch processing.</p>
           <div class="project-tags">
@@ -61,6 +104,7 @@
         </div>
 
         <div class="project-card">
+          <div class="project-card-accent"></div>
           <h3><a href="projects.html#file-processor">File Processor</a></h3>
           <p class="project-desc">A network-aware batch file processor that converts PDFs to TIFF/JPEG and handles format conversions at scale across shared directories.</p>
           <div class="project-tags">
@@ -70,7 +114,19 @@
           </div>
         </div>
 
+        <div class="project-card">
+          <div class="project-card-accent"></div>
+          <h3><a href="projects.html#study-aggregator">Study Aggregator</a></h3>
+          <p class="project-desc">A DICOM medical imaging processor that reads studies from directories, ZIPs, and optical drives, then generates organized patient reports via clipboard or PDF.</p>
+          <div class="project-tags">
+            <span class="tag">Python</span>
+            <span class="tag">DICOM</span>
+            <span class="tag">Multithreaded</span>
+          </div>
+        </div>
+
       </div>
+      <p style="margin-top: 1rem; font-size: 0.88rem; color: var(--color-text-muted);">Much of my strongest work is proprietary. <a href="projects.html">See all projects and case studies &rarr;</a></p>
     </div>
   </main>
 
