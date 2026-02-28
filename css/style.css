@@ -52,7 +52,7 @@ body {
   flex-direction: column;
 }
 
-/* --- Dot grid background --- */
+/* --- Dot grid background (disabled) ---
 body::before {
   content: '';
   position: fixed;
@@ -62,6 +62,7 @@ body::before {
   pointer-events: none;
   z-index: 0;
 }
+*/
 
 /* --- Typography --- */
 h1, h2, h3, h4 {
