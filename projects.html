@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects &mdash; Nathan Curtis</title>
+  <meta name="description" content="Tools and systems I've built.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-name">Nathan Curtis</a>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="projects.html" class="active">Projects</a></li>
+        <li><a href="resume.html">Resume</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="poetry.html">Poetry</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Projects</h1>
+    <p>Tools and systems I've built to solve real problems in production environments.</p>
+
+    <div class="project-list" style="margin-top: 2rem;">
+
+      <!-- Coil -->
+      <div class="project-card" id="coil">
+        <h3><a href="https://github.com/nathannncurtis/coil" target="_blank" rel="noopener">Coil</a></h3>
+
+        <p class="project-detail">
+          <strong>Problem:</strong> Existing tools for turning Python projects into executables &mdash; PyInstaller, cx_Freeze, Nuitka, py2exe &mdash; are all painful. Hidden imports, missing DLLs, spec files, hook scripts, cryptic errors. You spend more time fighting the tool than building your app.
+        </p>
+
+        <p class="project-detail">
+          <strong>Approach:</strong> Coil takes an opinionated approach: directory in, executable out. Point it at your project folder, and it handles the rest. Auto-detects entry points and dependencies, bundles an embedded Python runtime (no Python needed on target), and produces a single portable .exe or bundled directory. It also includes a built-in decompiler to recover your own source when you need it.
+        </p>
+
+        <p class="project-detail">
+          <strong>Outcome:</strong> Published on PyPI as <code>coil-compiler</code>. Supports portable and bundled build modes, GUI auto-detection for frameworks like tkinter/PyQt/PySide, and cached builds for faster iteration. This is my flagship project.
+        </p>
+
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">C</span>
+          <span class="tag">CLI</span>
+          <span class="tag">PyPI</span>
+        </div>
+
+        <a href="https://github.com/nathannncurtis/coil" target="_blank" rel="noopener" class="project-link">View on GitHub &rarr;</a>
+      </div>
+
+      <!-- Feather -->
+      <div class="project-card" id="feather">
+        <h3><a href="https://github.com/nathannncurtis/Feather" target="_blank" rel="noopener">Feather</a></h3>
+
+        <p class="project-detail">
+          <strong>Problem:</strong> In production imaging environments, oversized TIFF and JPEG files slow down processing pipelines, eat storage, and create bottlenecks when moving files across networks. Manual resizing doesn't scale.
+        </p>
+
+        <p class="project-detail">
+          <strong>Approach:</strong> Built a desktop application with a PyQt5 interface that dynamically resizes and compresses images to target file sizes. Uses multithreaded batch processing with a thread-safe progress tracker, handles both TIFF and JPEG formats, and includes memory management with forced garbage collection to handle large batches without crashing.
+        </p>
+
+        <p class="project-detail">
+          <strong>Outcome:</strong> Used internally to process large volumes of scanned documents. Handles batch jobs across network directories with visual progress tracking and error logging.
+        </p>
+
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">PyQt5</span>
+          <span class="tag">Pillow</span>
+          <span class="tag">Multithreading</span>
+        </div>
+
+        <a href="https://github.com/nathannncurtis/Feather" target="_blank" rel="noopener" class="project-link">View on GitHub &rarr;</a>
+      </div>
+
+      <!-- File Processor -->
+      <div class="project-card" id="file-processor">
+        <h3><a href="https://github.com/nathannncurtis/File-Processor" target="_blank" rel="noopener">File Processor</a></h3>
+
+        <p class="project-detail">
+          <strong>Problem:</strong> Production workflows require converting large volumes of PDFs to TIFF or JPEG, and converting between image formats &mdash; all across network shares, reliably, without manual intervention. Off-the-shelf tools don't handle the scale or the environment.
+        </p>
+
+        <p class="project-detail">
+          <strong>Approach:</strong> Built a multiprocessing-based file processor with a PyQt5 GUI. Features a job queue manager with configurable processing profiles, automatic CPU core rebalancing, system tray integration, and support for concurrent job execution across network directories. Handles both frozen (compiled) and development modes.
+        </p>
+
+        <p class="project-detail">
+          <strong>Outcome:</strong> Runs daily in a production environment, processing batch conversions across shared network folders. Separate modules handle PDF-to-TIFF, PDF-to-JPEG, and JPEG-to-TIFF pipelines with job management and error recovery.
+        </p>
+
+        <div class="project-tags">
+          <span class="tag">Python</span>
+          <span class="tag">PyQt5</span>
+          <span class="tag">Multiprocessing</span>
+          <span class="tag">Network I/O</span>
+        </div>
+
+        <a href="https://github.com/nathannncurtis/File-Processor" target="_blank" rel="noopener" class="project-link">View on GitHub &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- Add more projects by duplicating a project-card block above -->
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="contact-links">
+        <a href="mailto:nathan@nathancurtis.to">nathan@nathancurtis.to</a>
+        <a href="https://github.com/nathannncurtis" target="_blank" rel="noopener">GitHub</a>
+      </div>
+      <p class="copyright">&copy; 2026 Nathan Curtis</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
