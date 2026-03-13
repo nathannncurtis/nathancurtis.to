@@ -89,7 +89,7 @@ export default function Hero() {
     <section
       ref={ref}
       onClick={handleClick}
-      className="relative min-h-screen flex items-center justify-center px-8 pt-20 overflow-hidden cursor-default"
+      className="relative min-h-screen flex items-center justify-center px-8 pt-16 md:pt-0 overflow-hidden cursor-default"
     >
       {/* Click ripples — wobbly water rings */}
       <div className="absolute inset-0 pointer-events-none z-[2]">
