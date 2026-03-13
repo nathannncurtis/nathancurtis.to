@@ -1,0 +1,163 @@
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { Terminal, Server, Wrench, LayoutDashboard, Cpu } from "lucide-react";
+
+const capabilities = [
+  {
+    title: "Automation & Workflows",
+    desc: "OCR pipelines, batch processing, document classification, file conversion systems, job scheduling.",
+    icon: Terminal,
+  },
+  {
+    title: "Systems & Infrastructure",
+    desc: "Active Directory, Group Policy, DNS/DHCP, NAS deployment, firewall configuration, network segmentation.",
+    icon: Server,
+  },
+  {
+    title: "Production Hardware",
+    desc: "Kyocera production printer diagnostics and full maintenance kits. Hardware integration into imaging workflows.",
+    icon: Wrench,
+  },
+  {
+    title: "Tooling & Interfaces",
+    desc: "Internal dashboards, AG Grid, SQL-driven stat tracking, Electron apps, PyQt5 desktop tools.",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Technical Operations",
+    desc: "Cross-departmental workflow design, system diagnostics across layers, environment stabilization.",
+    icon: Cpu,
+  },
+];
+
+const aboutText = [
+  "My title is Process Development Specialist. The reality of the role is broader: I operate across software, infrastructure, production hardware, and people. When systems break or processes stall, I'm usually the one brought in to map the problem, stabilize the environment, and implement a long-term solution.",
+  "From OCR pipelines to Active Directory infrastructure, from production printer diagnostics to custom desktop tools; I operate across the full stack of operational technology. The reason I'm effective is that I can trace problems across all of those layers, not just the one that happens to be \"my job.\"",
+];
+
+export default function About() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  const bgY = useTransform(scrollYProgress, [0, 1], [60, -60]);
+
+  return (
+    <section
+      ref={ref}
+      id="about"
+      className="relative min-h-screen flex items-center justify-center px-8 py-24 overflow-hidden"
+    >
+      {/* Section-specific ambient glow */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+        style={{
+          y: bgY,
+          background: "radial-gradient(circle, var(--accent-glow) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="relative z-10 max-w-6xl mx-auto w-full">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <motion.span
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
+            style={{ color: "var(--accent-light)" }}
+          >
+            01
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 6 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3 }}
+            className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
+            style={{ color: "var(--fg)" }}
+          >
+            What I Do
+          </motion.h2>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.3, delay: 0.15 }}
+            className="h-[2px] w-12 mx-auto mt-6 rounded-full"
+            style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
+          />
+        </div>
+
+        {/* Two-column layout: prose left, cards right */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
+          {/* Prose */}
+          <div className="space-y-6 lg:sticky lg:top-32">
+            {aboutText.map((para, i) => (
+              <motion.p
+                key={i}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.03 }}
+                className="text-base md:text-[17px] leading-[1.9]"
+                style={{ color: "var(--fg-secondary)" }}
+              >
+                {para}
+              </motion.p>
+            ))}
+          </div>
+
+          {/* Capability cards */}
+          <div className="space-y-4">
+            {capabilities.map((cap, i) => {
+              const Icon = cap.icon;
+              return (
+                <motion.div
+                  key={cap.title}
+                  initial={{ opacity: 0, x: 6 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.3, delay: i * 0.03 }}
+                  whileHover={{
+                    x: 6,
+                    transition: { duration: 0.2 },
+                  }}
+                  className="group flex items-start gap-5 p-5 rounded-xl cursor-default transition-all duration-300"
+                  style={{
+                    background: "var(--bg-card)",
+                    border: "1px solid var(--border)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border-accent)";
+                    e.currentTarget.style.boxShadow = "0 4px 24px var(--accent-glow)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "var(--border)";
+                    e.currentTarget.style.boxShadow = "none";
+                  }}
+                >
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110"
+                    style={{
+                      background: "linear-gradient(135deg, var(--accent-glow-strong), var(--accent-glow))",
+                      border: "1px solid var(--border-accent)",
+                    }}
+                  >
+                    <Icon size={18} style={{ color: "var(--accent-light)" }} />
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-[15px] font-medium mb-1.5" style={{ color: "var(--fg)" }}>
+                      {cap.title}
+                    </h3>
+                    <p className="text-sm leading-[1.75]" style={{ color: "var(--fg-secondary)" }}>
+                      {cap.desc}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
