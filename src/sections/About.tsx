@@ -61,7 +61,7 @@ export default function About() {
           <motion.span
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
             style={{ color: "var(--accent-light)" }}
           >
@@ -70,7 +70,7 @@ export default function About() {
           <motion.h2
             initial={{ opacity: 0, y: 6 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
             style={{ color: "var(--fg)" }}
@@ -80,7 +80,7 @@ export default function About() {
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="h-[2px] w-12 mx-auto mt-6 rounded-full"
             style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
@@ -96,7 +96,7 @@ export default function About() {
                 key={i}
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, margin: "100px" }}
                 transition={{ duration: 0.3, delay: i * 0.03 }}
                 className="text-base md:text-[17px] leading-[1.9]"
                 style={{ color: "var(--fg-secondary)" }}
@@ -115,7 +115,7 @@ export default function About() {
                   key={cap.title}
                   initial={{ opacity: 0, x: 6 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: true, margin: "100px" }}
                   transition={{ duration: 0.3, delay: i * 0.03 }}
                   whileHover={{
                     x: 6,

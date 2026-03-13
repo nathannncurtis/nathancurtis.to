@@ -59,7 +59,7 @@ export default function Poetry() {
           <motion.span
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
             style={{ color: "var(--accent-light)" }}
           >
@@ -68,7 +68,7 @@ export default function Poetry() {
           <motion.h2
             initial={{ opacity: 0, y: 6 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
             style={{ color: "var(--fg)" }}
@@ -78,7 +78,7 @@ export default function Poetry() {
           <motion.div
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="h-[2px] w-12 mx-auto mt-6 rounded-full"
             style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
@@ -86,7 +86,7 @@ export default function Poetry() {
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="mt-6 text-base md:text-lg max-w-md mx-auto"
             style={{ color: "var(--fg-secondary)" }}
