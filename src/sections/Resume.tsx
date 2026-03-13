@@ -52,18 +52,12 @@ export default function Resume() {
         {/* Header */}
         <div className="text-center mb-16">
           <motion.span
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
             style={{ color: "var(--accent-light)" }}
           >
             03
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
             style={{ color: "var(--fg)" }}
@@ -72,8 +66,6 @@ export default function Resume() {
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="h-[2px] w-12 mx-auto mt-6 rounded-full"
             style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
@@ -84,9 +76,6 @@ export default function Resume() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 mb-16">
           {/* Current role */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="lg:col-span-3 relative rounded-2xl p-8 md:p-10 overflow-hidden"
             style={{
@@ -123,9 +112,6 @@ export default function Resume() {
               {duties.map((duty, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: -6 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "100px" }}
                   transition={{ duration: 0.3, delay: i * 0.03 }}
                   className="flex items-start gap-4"
                 >
@@ -143,9 +129,6 @@ export default function Resume() {
 
           {/* Skills */}
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.1 }}
             className="lg:col-span-2"
           >
@@ -156,9 +139,6 @@ export default function Resume() {
               {skills.map((skill, i) => (
                 <motion.span
                   key={skill}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: "100px" }}
                   transition={{ duration: 0.2, delay: i * 0.03 }}
                   onMouseEnter={() => setHoveredSkill(skill)}
                   onMouseLeave={() => setHoveredSkill(null)}
@@ -185,9 +165,6 @@ export default function Resume() {
           {domains.map((domain, i) => (
             <motion.div
               key={domain.title}
-              initial={{ opacity: 0, y: 8 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "100px" }}
               transition={{ duration: 0.3, delay: i * 0.03 }}
               whileHover={{ y: -4, transition: { duration: 0.2 } }}
               className="group relative rounded-xl p-6 cursor-default overflow-hidden transition-all duration-300"

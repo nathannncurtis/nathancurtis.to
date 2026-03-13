@@ -57,18 +57,12 @@ export default function Poetry() {
         {/* Header */}
         <div className="text-center mb-12">
           <motion.span
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
             style={{ color: "var(--accent-light)" }}
           >
             04
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
             style={{ color: "var(--fg)" }}
@@ -77,16 +71,11 @@ export default function Poetry() {
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="h-[2px] w-12 mx-auto mt-6 rounded-full"
             style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
           />
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="mt-6 text-base md:text-lg max-w-md mx-auto"
             style={{ color: "var(--fg-secondary)" }}
@@ -125,14 +114,12 @@ export default function Poetry() {
         <AnimatePresence mode="wait">
           <motion.div
             key={active}
-            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="max-w-lg mx-auto text-center"
           >
             <motion.h3
-              initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.1, duration: 0.4 }}
               className="font-serif text-2xl md:text-3xl italic mb-12"
@@ -145,7 +132,6 @@ export default function Poetry() {
               {poems[active].stanzas.map((stanza, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: 0.12 + i * 0.04 }}
                 >

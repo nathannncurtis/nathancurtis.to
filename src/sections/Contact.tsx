@@ -16,18 +16,12 @@ export default function Contact() {
     >
       <div className="max-w-4xl mx-auto w-full text-center">
         <motion.span
-          initial={{ opacity: 0, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "100px" }}
           className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
           style={{ color: "var(--accent-light)" }}
         >
           05
         </motion.span>
         <motion.h2
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "100px" }}
           transition={{ duration: 0.3, delay: 0.05 }}
           className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal mb-6"
           style={{ color: "var(--fg)" }}
@@ -36,16 +30,11 @@ export default function Contact() {
         </motion.h2>
         <motion.div
           initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true, margin: "100px" }}
           transition={{ duration: 0.3, delay: 0.15 }}
           className="h-[2px] w-12 mx-auto mt-2 mb-8 rounded-full"
           style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
         />
         <motion.p
-          initial={{ opacity: 0, y: 6 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "100px" }}
           transition={{ duration: 0.3, delay: 0.1 }}
           className="text-base md:text-lg leading-[1.8] mb-16 max-w-lg mx-auto"
           style={{ color: "var(--fg-secondary)" }}
@@ -59,9 +48,6 @@ export default function Contact() {
             return (
               <motion.div
                 key={link.label}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "100px" }}
                 transition={{ duration: 0.3, delay: i * 0.03 }}
                 className="flex-1"
               >
@@ -112,9 +98,6 @@ export default function Contact() {
         </div>
 
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: "100px" }}
           className="mt-28 pt-6 flex items-center justify-center text-[10px] tracking-[0.15em] font-mono"
           style={{ borderTop: "1px solid var(--border)", color: "var(--fg-dim)" }}
         >

@@ -69,18 +69,12 @@ export default function Projects() {
         {/* Header */}
         <div className="text-center mb-16">
           <motion.span
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             className="inline-block text-[11px] font-mono tracking-[0.2em] mb-4"
             style={{ color: "var(--accent-light)" }}
           >
             02
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3 }}
             className="font-heading text-4xl md:text-5xl lg:text-6xl font-normal"
             style={{ color: "var(--fg)" }}
@@ -89,8 +83,6 @@ export default function Projects() {
           </motion.h2>
           <motion.div
             initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, margin: "100px" }}
             transition={{ duration: 0.3, delay: 0.15 }}
             className="h-[2px] w-12 mx-auto mt-6 rounded-full"
             style={{ background: "linear-gradient(90deg, var(--accent), var(--accent-light))" }}
@@ -105,9 +97,6 @@ export default function Projects() {
             return (
               <motion.div
                 key={project.id}
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "100px" }}
                 transition={{ duration: 0.3, delay: i * 0.03 }}
                 className="relative rounded-2xl overflow-hidden transition-all duration-300"
                 style={{
@@ -194,7 +183,6 @@ export default function Projects() {
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1] }}
@@ -209,7 +197,6 @@ export default function Projects() {
                           ].map((block, bi) => (
                             <motion.div
                               key={block.label}
-                              initial={{ opacity: 0, y: 12 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ duration: 0.35, delay: bi * 0.1 }}
                             >
