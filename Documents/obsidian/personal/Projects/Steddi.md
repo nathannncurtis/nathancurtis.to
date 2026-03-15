@@ -11,8 +11,12 @@ iOS navigation app for daily commuters who already know their routes. Your route
 - iOS 17+, no backend for v1
 
 ## Status
-- **Phase 1: Project Foundation** — scaffolded and pushed to GitHub
-- Xcode still installing — planning and scaffolding mode only
+- **Phases 1-9 code written** — full MVVM stack scaffolded, all pushed to GitHub (9 commits)
+- 33 Swift files: 5 models, 6 services, 5 view models, 13 views, 1 utility, 1 app entry
+- 35 Python tests for threshold algorithm (all passing)
+- **Blocked on Xcode install** — next step is open project, compile, fix issues, run on device
+- Mapbox map views are placeholders (MapPlaceholderView) — swap for real MapView once building
+- Need to set up Mapbox tokens (.netrc + Info.plist) before first build
 
 ## v1 Phases
 1. ~~Project Foundation~~ — repo, models, services, architecture docs
