@@ -11,12 +11,15 @@ iOS navigation app for daily commuters who already know their routes. Your route
 - iOS 17+, no backend for v1
 
 ## Status
-- **Phases 1-9 code written** — full MVVM stack scaffolded, all pushed to GitHub (9 commits)
-- 33 Swift files: 5 models, 6 services, 5 view models, 13 views, 1 utility, 1 app entry
+- **App builds and runs** on iPhone 17 Pro simulator (iOS 26.3, Xcode 26.3)
+- Live Mapbox map with dusk style, user location puck, liquid glass UI
+- Real turn-by-turn navigation via Mapbox Navigation SDK v3
+- Address search via Mapbox Geocoding API v6
+- Onboarding flow, settings, commute management, donation view all functional
+- GPS trace recording during navigation, post-arrival route save with Map Matching
 - 35 Python tests for threshold algorithm (all passing)
-- **Blocked on Xcode install** — next step is open project, compile, fix issues, run on device
-- Mapbox map views are placeholders (MapPlaceholderView) — swap for real MapView once building
-- Need to set up Mapbox tokens (.netrc + Info.plist) before first build
+- 18 commits, zero warnings, zero crashes
+- **Next**: test on real iPhone 16 Pro, commute-aware routing (BYOR), reroute engine live integration
 
 ## v1 Phases
 1. ~~Project Foundation~~ — repo, models, services, architecture docs
