@@ -1,0 +1,47 @@
+# Steddi Progress
+
+## Completed
+- [x] Project scaffold — models, services, architecture docs, Package.swift
+- [x] Mapbox SDK integration — Nav SDK v3, Maps SDK, Directions API, Map Matching API, Geocoding API
+- [x] Xcode project setup — xcodegen, builds clean, zero warnings
+- [x] SwiftData models — PinnedLocation, Commute, Route, DriveRecord, NoGoZone, CommuteTrip
+- [x] Home screen — full-screen map, "Where to?" search bar, settings gear, bottom sheet with tabs
+- [x] Search — Mapbox Geocoding v6, debounced 150ms, inline expansion from search bar
+- [x] Navigation — custom SteddiNavOverlay (NOT stock Mapbox UI), route line, camera tracking
+- [x] Turn-by-turn UI — instruction banner, next maneuver preview, street name, speedometer, compass, voice toggle, view toggle, report button, ETA bar
+- [x] Chase-cam — route-based bearing, 80m look-ahead, 65° pitch, smoothed rotation
+- [x] Route planning — full-screen map, tap to add waypoints, direction picker, multi-waypoint routing, zoom buttons
+- [x] Commute management — create/edit commutes, search for locations, location picker
+- [x] Bidirectional commutes — auto-detect direction (proximity → learned patterns → time heuristic → ask)
+- [x] BYOR — commutes use saved preferred routes (sampled waypoints from stored polyline)
+- [x] Trip logging — CommuteTrip records direction/day/hour for pattern learning
+- [x] No-go zone editor — full-screen map, tap to place, radius slider, red circle preview, search
+- [x] Onboarding — 5 pages (welcome, pin places, drive to learn, privacy, threshold), dark mode, lavender theme
+- [x] Privacy page in onboarding — "all data on-device, nothing sold or shared"
+- [x] Silent arrival — no popup, local notification 2 min later if route should be saved
+- [x] Settings — threshold slider, hard floor stepper, voice toggle, units, no-go zones, commute management, donation
+- [x] Donation view — StoreKit tip jar with fallback display
+- [x] Visual identity — soft lavender (#9B8EC4), warm dark surfaces, Steddi theme system, custom puck
+- [x] Light/dark mode — adaptive colors, map presets (day/dawn/dusk), sunset auto-switch
+- [x] Landscape — side panel on left, map fills all edges, no white bars
+- [x] Portrait — bottom sheet with Commutes/Places tabs, fills to screen edge
+- [x] Python tests — 35 tests for threshold algorithm, all passing
+
+## In Progress
+- [ ] Reroute engine live integration — logic exists in `RerouteEngine.swift`, not connected to active nav
+- [ ] Voice guidance toggle — UI button exists, not wired to `RouteVoiceController`
+
+## Not Started
+- [ ] Reroute suggestion card during live nav (RerouteCardView exists, not triggered)
+- [ ] Fallback cascade during navigation
+- [ ] "Drive it" route recording with Map Matching post-arrival
+- [ ] Offline route caching (OfflineCacheService exists, not triggered)
+- [ ] Downloadable routes for offline use
+- [ ] Route-specific no-go zones (model supports it, no UI)
+- [ ] Global no-go zone override per-route (model supports it, no UI)
+- [ ] CarPlay support
+- [ ] Passive route learning (pattern detection from repeated drives)
+- [ ] Custom voice guidance
+- [ ] App icon / branding
+- [ ] TestFlight / real device testing (need Apple Developer account)
+- [ ] App Store submission

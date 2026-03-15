@@ -4,56 +4,43 @@ iOS navigation app for daily commuters who already know their routes. Your route
 
 ## Links
 - Repo: github.com/nathannncurtis/steddi (private)
-- Server path: `/home/nathan/projects/steddi` (clawd)
+- Local: `~/projects/steddi` (Mac)
+- Server: `/home/nathan/projects/steddi` (clawd)
+- Subnotes: [[steddi/architecture]], [[steddi/decisions]], [[steddi/progress]], [[steddi/pitfalls]], [[steddi/todo]]
 
 ## Stack
-- Swift / SwiftUI / Mapbox Navigation SDK v3 / SwiftData / MVVM
-- iOS 17+, no backend for v1
+- Swift / SwiftUI / UIKit (map container) / iOS 26+
+- Mapbox Navigation SDK v3 (core only — custom UI, not stock NavigationViewController)
+- Mapbox Maps SDK (Standard style with dusk/day/dawn presets)
+- SwiftData for persistence
+- MVVM architecture
+- Xcode 26.3, iPhone 17 Pro simulator
 
-## Status
-- **App builds and runs** on iPhone 17 Pro simulator (iOS 26.3, Xcode 26.3)
-- Live Mapbox map with dusk style, user location puck, liquid glass UI
-- Real turn-by-turn navigation via Mapbox Navigation SDK v3
-- Address search via Mapbox Geocoding API v6
-- Onboarding flow, settings, commute management, donation view all functional
-- GPS trace recording during navigation, post-arrival route save with Map Matching
+## Status (as of 2026-03-15)
+- **82 commits**, 44 Swift files, zero compiler errors, zero warnings
 - 35 Python tests for threshold algorithm (all passing)
-- 18 commits, zero warnings, zero crashes
-- **Next**: test on real iPhone 16 Pro, commute-aware routing (BYOR), reroute engine live integration
+- App builds and runs on simulator
+- **Working features**: search, navigation with custom UI, route planning, commute management, bidirectional commutes with smart direction detection, no-go zones, onboarding, settings, light/dark mode with adaptive map styles, landscape side panel
+- **Not yet wired**: reroute engine (logic exists but not connected to live nav), offline caching (service exists but not triggered), voice toggle (UI exists but not connected), CarPlay
 
-## v1 Phases
-1. ~~Project Foundation~~ — repo, models, services, architecture docs
-2. Map & Location Core — Mapbox map view, location tracking, permissions
-3. Pinned Locations — save/manage locations, home screen cards, search
-4. Basic Navigation (Dumb Mode) — standard turn-by-turn, global no-go zones
-5. Route Recording ("Drive It") — GPS trace + Map Matching, save preferred route
-6. Commute System — origin/destination pairs, route hierarchy, BYOR navigation
-7. Reroute Engine — traffic monitoring, threshold logic, suggestion UI, fallback cascade
-8. Route Planning ("Draw/Plan It") — manual route creation, route-specific no-go zones
-9. Offline, Donations & Polish — caching, downloadable routes, StoreKit tip jar, onboarding
+## Visual Identity
+- **Signature color**: Soft Lavender `#9B8EC4` — all accents, icons, borders, route line
+- **Dark surfaces**: `#1C1917` warm dark (adaptive — flips to warm white `#F8F5F2` in light mode)
+- **Sage green** `#22BD73` for "good to go" states
+- **Warm red** `#E84D3D` for warnings/delays
+- **Typography**: SF Rounded bold for headings, monospaced for numbers (ETAs/speed), default for body
+- **Puck**: lavender soft-cornered triangle with white border (custom UIImage)
+- **Route line**: lavender with `lineEmissiveStrength = 1.0` to resist 3D dusk lighting
+- **Steady Line**: signature brand element — lavender gradient line used as dividers
 
-## Deferred (post-v1)
-- Passive route learning (pattern detection from repeated drives)
-- CarPlay support
-- Custom voice guidance
-- App icon / branding
-
-## Threshold Algorithm
-- Percentage-based, evaluated against **remaining ETA** (not original trip duration)
-- Percentage scales with remaining time: higher % for short drives, lower % for long
-- Sigmoid curve centered at 30 min remaining
-- If percentage threshold met → reroute suggested, regardless of hard floor
-- Hard minute floor (default 10 min) = secondary gate for long drives only
-- Default base percentage: 20%
+## Key Architecture
+- Home screen: UIKit `MapView` wrapped in `UIViewControllerRepresentable`, SwiftUI overlay
+- Navigation: Mapbox `NavigationCore` for routing engine (active guidance, voice, route progress). Custom `SteddiNavOverlay` SwiftUI view for turn-by-turn UI — NOT the stock `NavigationViewController`
+- Camera: chase-cam style (route-based bearing, 80m look-ahead, 65° pitch, smoothed rotation)
+- Map style: Mapbox Standard with adaptive light presets (day/dawn/dusk based on system appearance + time of day)
 
 ## Mapbox Free Tier Limits
 - Nav SDK: 1,000 trips/month
 - Directions API: 100,000 requests/month
 - Map Matching API: 100,000 requests/month
 - Maps SDK: 25,000 MAU
-
-## Decisions
-- No-go zones: global (settings) + route-specific (during planning). Global can be overridden per-route (hidden opt-in).
-- Offline: cache active route during nav, linger 5 min after, manual download option. No traffic data cached.
-- Monetization: StoreKit tip jar, no ads, no subscription
-- Passive route learning deferred to post-v1
