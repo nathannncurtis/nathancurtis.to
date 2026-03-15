@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "motion/react";
 
 const skills = [
-  "Python", "C", "C++", "C#", "TypeScript", "JavaScript", "Go",
-  "PowerShell", "Shell", "PHP", "PyQt5", "Electron", "React",
+  "Python", "Swift", "C", "C++", "C#", "TypeScript", "JavaScript", "Go",
+  "PowerShell", "Shell", "PHP", "SwiftUI", "PyQt5", "Electron", "React",
   "AG Grid", "SQL", "Docker", "Active Directory", "Group Policy",
   "DNS/DHCP", "RAID", "SSH",
 ];
@@ -11,7 +11,7 @@ const skills = [
 const domains = [
   {
     title: "Automation & Workflow Development",
-    desc: "Python, C, C++, C#, TypeScript, JavaScript, Go, PowerShell, PHP. OCR pipelines, batch processing, document classification, file conversion systems, job scheduling, desktop utilities.",
+    desc: "Python, Swift, C, C++, C#, TypeScript, JavaScript, Go, PowerShell, PHP. OCR pipelines, batch processing, document classification, file conversion systems, job scheduling, desktop utilities.",
   },
   {
     title: "Systems & Infrastructure",
