@@ -28,8 +28,13 @@
 - [x] Python tests — 35 tests for threshold algorithm, all passing
 
 ## In Progress
-- [ ] Reroute engine live integration — logic exists in `RerouteEngine.swift`, not connected to active nav
-- [ ] Voice guidance toggle — UI button exists, not wired to `RouteVoiceController`
+- [x] Reroute engine live integration — wired, periodic fallback check every 5 min, RerouteCardView shows suggestions
+- [x] Voice guidance toggle — wired via AVAudioSession mute/unmute
+- [x] Live ETA on commute cards — periodic DirectionsService fetch every 5 min
+- [x] Deleted 11 unused files (ViewModels, NavigationCoordinator, legacy views)
+- [x] Landscape TBT — two floating cards (instruction + ETA) with 44pt buttons between them
+- [x] Landscape home — side panel on left, rounded right corners
+- [x] Portrait/landscape code fully separated in both HomeView and SteddiNavOverlay
 
 ## Not Started
 - [ ] Reroute suggestion card during live nav (RerouteCardView exists, not triggered)
