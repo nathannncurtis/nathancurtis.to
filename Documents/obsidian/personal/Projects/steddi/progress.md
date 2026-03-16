@@ -35,6 +35,13 @@
 - [x] Landscape TBT — two floating cards (instruction + ETA) with 44pt buttons between them
 - [x] Landscape home — side panel on left, rounded right corners
 - [x] Portrait/landscape code fully separated in both HomeView and SteddiNavOverlay
+- [x] 2D/3D toggle — cube/square button is sole toggle, compass is north indicator only
+- [x] POI search — switched to Search Box v1 API, supports business names (CVS, Starbucks, etc.)
+- [x] Search results show distance from current location
+- [x] Report persistence — Report SwiftData model, saves type + location + timestamp
+- [x] Settings: Delete All Data with confirmation dialog
+- [x] Settings: About section with app version from bundle
+- [x] Landscape speedometer shrunk to 38pt
 
 ## Not Started
 - [ ] Reroute suggestion card during live nav (RerouteCardView exists, not triggered)
