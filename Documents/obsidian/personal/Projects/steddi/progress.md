@@ -42,6 +42,8 @@
 - [x] Settings: Delete All Data with confirmation dialog
 - [x] Settings: About section with app version from bundle
 - [x] Landscape speedometer shrunk to 38pt
+- [x] Post-arrival route review — map preview, "Looks good" save, "Edit route" → RoutePlannerView
+- [x] steddi:// URL scheme for CLI testing (steddi://test-arrival triggers post-arrival flow)
 
 ## Not Started
 - [ ] Reroute suggestion card during live nav (RerouteCardView exists, not triggered)
