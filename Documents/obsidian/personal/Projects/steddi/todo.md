@@ -4,8 +4,7 @@
 - "Drive it" recording: after navigating, if GPS trace is good, offer to save via Map Matching
 
 ## Priority 2 — Polish
-- Speed limit data display (speedometer shows speed but limit isn't always available)
-- Post-arrival sheet (from notification tap) needs to actually run Map Matching on the recorded trace
+- Post-arrival Map Matching needs real on-device GPS trace testing (mock flow works)
 
 ## Priority 3 — Features
 - Offline route caching (service exists, needs triggering on nav start/end)

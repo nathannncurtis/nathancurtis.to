@@ -44,6 +44,7 @@
 - [x] Landscape speedometer shrunk to 38pt
 - [x] Post-arrival route review — map preview, "Looks good" save, "Edit route" → RoutePlannerView
 - [x] steddi:// URL scheme for CLI testing (steddi://test-arrival triggers post-arrival flow)
+- [x] Speed limit badge — shows limit number in small circle on speedometer when data available
 
 ## Not Started
 - [ ] Reroute suggestion card during live nav (RerouteCardView exists, not triggered)
