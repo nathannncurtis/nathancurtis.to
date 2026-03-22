@@ -1,56 +1,69 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ExternalLink, ChevronDown, FileCode2, Layers, HardDrive, Activity } from "lucide-react";
+import { ExternalLink, ChevronDown, FileCode2, Layers, HardDrive, Activity, Navigation } from "lucide-react";
 
 const projects = [
   {
-    id: "coil",
+    id: "steddi",
     num: "01",
+    name: "Steddi",
+    tagline: "iOS navigation for daily commuters",
+    icon: Navigation,
+    github: null,
+    problem: "Navigation apps treat every drive like you've never been there. Daily commuters don't need turn-by-turn for routes they already know. They need to know when something's wrong.",
+    approach: "An iOS app built with Swift, SwiftUI, and Mapbox that learns your routes and only reroutes when it actually matters. Includes CarPlay support for hands-free use.",
+    outcome: "Currently in development. Private repo.",
+    tags: ["Swift", "SwiftUI", "Mapbox", "CarPlay"],
+    accent: "#5B8DEF",
+  },
+  {
+    id: "coil",
+    num: "02",
     name: "Coil",
     tagline: "Python-to-executable compiler",
     icon: FileCode2,
     github: "https://github.com/nathannncurtis/coil",
-    problem: "Existing tools for turning Python projects into executables (PyInstaller, cx_Freeze, Nuitka) are all painful. Hidden imports, missing DLLs, spec files, hook scripts, cryptic errors.",
-    approach: "Coil takes an opinionated approach: directory in, executable out. Auto-detects entry points and dependencies, bundles an embedded Python runtime, and produces a single portable .exe. Includes a built-in decompiler to recover source.",
-    outcome: "Published on PyPI as coil-compiler. Supports portable and bundled build modes, GUI auto-detection, and cached builds for faster iteration. Flagship project.",
+    problem: "Every tool for turning Python into an executable is painful. Hidden imports, missing DLLs, spec files, hook scripts, cryptic errors. Nobody should have to deal with that.",
+    approach: "Point it at a project directory, get a standalone .exe back. No spec files, no hook scripts. Auto-detects entry points and dependencies, bundles an embedded Python runtime.",
+    outcome: "Published on PyPI as coil-compiler. Supports portable and bundled build modes, GUI auto-detection, and cached builds.",
     tags: ["Python", "C", "CLI", "PyPI"],
     accent: "#4A9A9A",
   },
   {
     id: "feather",
-    num: "02",
+    num: "03",
     name: "Feather",
-    tagline: "Batch image optimizer for production",
+    tagline: "Lightweight bulk image optimizer",
     icon: Layers,
     github: "https://github.com/nathannncurtis/Feather",
-    problem: "Oversized TIFF and JPEG files slow down processing pipelines, eat storage, and create bottlenecks. Manual resizing doesn't scale.",
-    approach: "Desktop app with PyQt5 that dynamically resizes and compresses images to target sizes. Multithreaded batch processing with memory management and forced GC for large batches.",
-    outcome: "Used internally to process large volumes of scanned documents across network directories with visual progress tracking.",
+    problem: "Thousands of scanned images need to shrink before archival or transfer. Manual resizing doesn't scale and oversized files create bottlenecks everywhere.",
+    approach: "Desktop app that dynamically resizes and compresses TIFF/JPEG in bulk. Multithreaded with memory management for large batches.",
+    outcome: "Used internally to process large volumes of scanned documents across network directories.",
     tags: ["Python", "PyQt5", "Pillow", "Multithreading"],
     accent: "#D4944A",
   },
   {
     id: "file-processor",
-    num: "03",
+    num: "04",
     name: "File Processor",
     tagline: "Network-aware batch converter",
     icon: HardDrive,
     github: "https://github.com/nathannncurtis/File-Processor",
-    problem: "Production workflows require converting large volumes of PDFs to TIFF/JPEG across network shares, reliably, without manual intervention.",
-    approach: "Multiprocessing-based processor with PyQt5 GUI, configurable job queue, automatic CPU core rebalancing, system tray integration, and concurrent execution across network directories.",
-    outcome: "Runs daily in production. Separate modules handle PDF-to-TIFF, PDF-to-JPEG, and JPEG-to-TIFF pipelines with job management and error recovery.",
+    problem: "Production workflows need to convert large volumes of PDFs to TIFF/JPEG across network shares, reliably, without anyone babysitting it.",
+    approach: "Multiprocessing with a PyQt5 GUI, configurable job queue, automatic CPU core rebalancing, and concurrent execution across network directories.",
+    outcome: "Runs daily in production. Handles PDF-to-TIFF, PDF-to-JPEG, and JPEG-to-TIFF pipelines with job management and error recovery.",
     tags: ["Python", "PyQt5", "Multiprocessing", "Network I/O"],
     accent: "#5CB8B8",
   },
   {
     id: "study-aggregator",
-    num: "04",
+    num: "05",
     name: "Study Aggregator",
     tagline: "DICOM medical imaging processor",
     icon: Activity,
     github: "https://github.com/nathannncurtis/Study-Aggregator",
-    problem: "Processing DICOM studies from CDs, ZIPs, and network drives is tedious. Staff need organized patient reports quickly from messy real-world data.",
-    approach: "Reads DICOM from directories, encrypted/unencrypted ZIPs (nested 10 levels), and optical drives. Merges patient studies with conflict detection. Outputs reports via clipboard or PDF. Multithreaded at 4x CPU cores.",
+    problem: "DICOM studies come in from CDs, ZIPs, and network drives in every format imaginable. Staff need organized patient reports fast from messy real-world data.",
+    approach: "Reads DICOM from directories, encrypted/unencrypted ZIPs (nested 10 levels deep), and optical drives. Merges patient studies with conflict detection. Outputs via clipboard or PDF.",
     outcome: "Distributed via installer with auto-update. Used daily in production. Handles extensionless DICOM, AES-encrypted archives, and mixed-format directories.",
     tags: ["Python", "DICOM", "Multithreading", "Inno Setup"],
     accent: "#6A7A8A",
@@ -229,16 +242,25 @@ export default function Projects() {
                               </span>
                             ))}
                           </div>
-                          <a
-                            href={project.github}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group inline-flex items-center gap-2.5 text-sm font-semibold transition-all duration-200 hover:gap-3.5 ml-auto"
-                            style={{ color: project.accent }}
-                          >
-                            View on GitHub
-                            <ExternalLink size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                          </a>
+                          {project.github ? (
+                            <a
+                              href={project.github}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group inline-flex items-center gap-2.5 text-sm font-semibold transition-all duration-200 hover:gap-3.5 ml-auto"
+                              style={{ color: project.accent }}
+                            >
+                              View on GitHub
+                              <ExternalLink size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                            </a>
+                          ) : (
+                            <span
+                              className="inline-flex items-center gap-2 text-sm font-mono ml-auto"
+                              style={{ color: "var(--fg-dim)" }}
+                            >
+                              Private repo
+                            </span>
+                          )}
                         </div>
                       </div>
                     </motion.div>

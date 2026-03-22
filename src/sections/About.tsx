@@ -5,34 +5,34 @@ import { Terminal, Server, Wrench, LayoutDashboard, Cpu } from "lucide-react";
 const capabilities = [
   {
     title: "Automation & Workflows",
-    desc: "OCR pipelines, batch processing, document classification, file conversion systems, job scheduling.",
+    desc: "Batch OCR, PDF compression, image classification, file conversion. Built around the actual hardware and legacy software they have to survive in.",
     icon: Terminal,
   },
   {
     title: "Systems & Infrastructure",
-    desc: "Active Directory, Group Policy, DNS/DHCP, NAS deployment, firewall configuration, network segmentation.",
+    desc: "Active Directory, DNS/DHCP, NAS deployment, firewalls, network segmentation. The stuff that has to work before anything else can.",
     icon: Server,
   },
   {
     title: "Production Hardware",
-    desc: "Kyocera production printer diagnostics and full maintenance kits. Hardware integration into imaging workflows.",
+    desc: "Printer diagnostics, maintenance kits, scanner configuration. Hardware integration into imaging workflows.",
     icon: Wrench,
   },
   {
     title: "Tooling & Interfaces",
-    desc: "Internal dashboards, AG Grid, SQL-driven stat tracking, Electron apps, PyQt5 desktop tools.",
+    desc: "Dashboards, desktop tools, stat tracking. Built for people who don't care how it works, just that it does.",
     icon: LayoutDashboard,
   },
   {
-    title: "Technical Operations",
-    desc: "Cross-departmental workflow design, system diagnostics across layers, environment stabilization.",
+    title: "Operational Glue",
+    desc: "Connecting systems that weren't designed to talk to each other, stabilizing processes that keep breaking, replacing manual handoffs.",
     icon: Cpu,
   },
 ];
 
 const aboutText = [
-  "My title is Process Development Specialist. The reality of the role is broader: I operate across software, infrastructure, production hardware, and people. When systems break or processes stall, I'm usually the one brought in to map the problem, stabilize the environment, and implement a long-term solution.",
-  "From OCR pipelines to Active Directory infrastructure, from production printer diagnostics to custom desktop tools; I operate across the full stack of operational technology. The reason I'm effective is that I can trace problems across all of those layers, not just the one that happens to be \"my job.\"",
+  "I build internal tools. The kind that connect systems no one designed to talk to each other, replace the manual glue holding production workflows together, and survive environments where \"just use a SaaS\" isn't an option.",
+  "I'm usually the person diagnosing why something broke before I'm the one building the fix. The reason that works is I can trace problems across software, infrastructure, hardware, and people. Not just the layer that happens to be \"my job.\"",
 ];
 
 export default function About() {

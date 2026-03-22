@@ -89,7 +89,7 @@ export default function Hero() {
     <section
       ref={ref}
       onClick={handleClick}
-      className="relative min-h-screen flex items-center justify-center px-8 pt-16 md:pt-0 overflow-hidden cursor-default"
+      className="relative min-h-screen flex items-center justify-center px-8 pt-24 md:pt-0 overflow-hidden cursor-default"
     >
       {/* Click ripples — wobbly water rings */}
       <div className="absolute inset-0 pointer-events-none z-[2]">
@@ -128,27 +128,6 @@ export default function Hero() {
       </div>
 
       <motion.div style={{ y, opacity }} className="relative z-10 text-center max-w-4xl mx-auto">
-        {/* Status badge */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, filter: "blur(8px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-          transition={{ delay: 0.15, duration: 0.6, ease: "easeOut" }}
-          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full mb-10"
-          style={{
-            background: "linear-gradient(135deg, var(--accent-glow-strong), var(--accent-glow))",
-            border: "1px solid var(--border-accent)",
-            boxShadow: "0 0 30px var(--accent-glow)",
-          }}
-        >
-          <div className="relative w-2 h-2">
-            <div className="absolute inset-0 rounded-full animate-ping" style={{ background: "var(--accent)", opacity: 0.4 }} />
-            <div className="absolute inset-0 rounded-full" style={{ background: "var(--accent)" }} />
-          </div>
-          <span className="text-xs font-mono tracking-wider" style={{ color: "var(--accent-light)" }}>
-            Process Development Specialist
-          </span>
-        </motion.div>
-
         {/* Name */}
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -193,7 +172,7 @@ export default function Hero() {
           className="text-lg md:text-xl leading-[1.8] mb-14 max-w-2xl mx-auto"
           style={{ color: "var(--fg-secondary)" }}
         >
-          Automation, infrastructure, production hardware, and cross-departmental workflow design; all in one person.
+          Internal tools, automation, and the infrastructure around them. Most of my work lives in private repos for environments where nothing talks to anything else.
         </motion.p>
 
         {/* CTAs — magnetic */}

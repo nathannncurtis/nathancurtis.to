@@ -39,7 +39,7 @@ export default function Contact() {
           className="text-base md:text-lg leading-[1.8] mb-16 max-w-lg mx-auto"
           style={{ color: "var(--fg-secondary)" }}
         >
-          If you have a broken system, a manual process that should be automated, or infrastructure that needs stabilizing; I'm interested.
+          Broken system, manual process that should be automated, or something that just keeps breaking. I'm interested.
         </motion.p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 max-w-2xl mx-auto">

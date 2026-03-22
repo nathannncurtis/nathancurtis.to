@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 
 const skills = [
-  "Python", "Swift", "C", "C++", "C#", "TypeScript", "JavaScript", "Go",
+  "Python", "Swift", "Rust", "C", "C++", "C#", "TypeScript", "JavaScript", "Go",
   "PowerShell", "Shell", "PHP", "SwiftUI", "PyQt5", "Electron", "React",
   "AG Grid", "SQL", "Docker", "Active Directory", "Group Policy",
   "DNS/DHCP", "RAID", "SSH",
@@ -10,24 +10,24 @@ const skills = [
 
 const domains = [
   {
-    title: "Automation & Workflow Development",
-    desc: "Python, Swift, C, C++, C#, TypeScript, JavaScript, Go, PowerShell, PHP. OCR pipelines, batch processing, document classification, file conversion systems, job scheduling, desktop utilities.",
+    title: "Automation & Workflows",
+    desc: "OCR pipelines, batch processing, document classification, file conversion. The stuff that saves 20 minutes a day and no one thinks to automate.",
   },
   {
     title: "Systems & Infrastructure",
-    desc: "Active Directory and Group Policy, DNS/DHCP, NAS deployment (RAID, permissions, backups), firewall configuration, network segmentation, SSH, cross-platform support.",
+    desc: "Active Directory, DNS/DHCP, NAS deployment, firewalls, network segmentation. The stuff that has to work before anything else can.",
   },
   {
-    title: "Production Hardware & Imaging",
-    desc: "Kyocera production printer diagnostics and full maintenance kits. Hardware integration into production workflows. Scanner configuration.",
+    title: "Production Hardware",
+    desc: "Printer diagnostics, maintenance kits, scanner configuration. Hardware integration into imaging workflows.",
   },
   {
-    title: "Interface & Tooling Design",
-    desc: "Internal dashboards with AG Grid and inline editing. SQL-driven stat tracking. Electron apps. PyQt5 desktop tools. Built for non-technical users.",
+    title: "Tooling & Interfaces",
+    desc: "Dashboards, desktop tools, stat tracking. Built for people who don't care how it works, just that it does.",
   },
   {
-    title: "Technical Operations",
-    desc: "Cross-departmental workflow design. System diagnostics across software, infrastructure, and hardware layers. Environment stabilization.",
+    title: "Operational Glue",
+    desc: "Connecting systems that weren't designed to talk to each other. Replacing manual handoffs. Stabilizing things that keep breaking.",
   },
 ];
 
