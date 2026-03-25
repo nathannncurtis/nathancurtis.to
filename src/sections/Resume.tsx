@@ -8,28 +8,6 @@ const skills = [
   "DNS/DHCP", "RAID", "SSH",
 ];
 
-const domains = [
-  {
-    title: "Automation & Workflows",
-    desc: "OCR pipelines, batch processing, document classification, file conversion. The stuff that saves 20 minutes a day and no one thinks to automate.",
-  },
-  {
-    title: "Systems & Infrastructure",
-    desc: "Active Directory, DNS/DHCP, NAS deployment, firewalls, network segmentation. The stuff that has to work before anything else can.",
-  },
-  {
-    title: "Production Hardware",
-    desc: "Printer diagnostics, maintenance kits, scanner configuration. Hardware integration into imaging workflows.",
-  },
-  {
-    title: "Tooling & Interfaces",
-    desc: "Dashboards, desktop tools, stat tracking. Built for people who don't care how it works, just that it does.",
-  },
-  {
-    title: "Operational Glue",
-    desc: "Connecting systems that weren't designed to talk to each other. Replacing manual handoffs. Stabilizing things that keep breaking.",
-  },
-];
 
 const duties = [
   "Design and maintain automation pipelines for document processing, OCR, file conversion, and batch imaging",
@@ -161,40 +139,6 @@ export default function Resume() {
           </motion.div>
         </div>
 
-        {/* Domains */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {domains.map((domain, i) => (
-            <motion.div
-              key={domain.title}
-              transition={{ duration: 0.3, delay: i * 0.03 }}
-              whileHover={{ y: -4, transition: { duration: 0.2 } }}
-              className="group relative rounded-xl p-6 cursor-default overflow-hidden transition-all duration-300"
-              style={{
-                background: "var(--bg-card)",
-                border: "1px solid var(--border)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "var(--border-hover)";
-                e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = "var(--border)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-            >
-              <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(circle at 50% 0%, var(--accent-glow) 0%, transparent 70%)" }}
-              />
-              <h4 className="relative font-heading text-sm font-medium mb-2" style={{ color: "var(--fg)" }}>
-                {domain.title}
-              </h4>
-              <p className="relative text-sm leading-[1.8]" style={{ color: "var(--fg-secondary)" }}>
-                {domain.desc}
-              </p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );
