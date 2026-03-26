@@ -1,24 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ExternalLink, ChevronDown, FileCode2, Layers, HardDrive, Activity, Navigation } from "lucide-react";
+import { ExternalLink, ChevronDown, FileCode2, Layers, HardDrive, Activity } from "lucide-react";
 
 const projects = [
   {
-    id: "steddi",
-    num: "01",
-    name: "Steddi",
-    tagline: "iOS navigation for daily commuters",
-    icon: Navigation,
-    github: null,
-    problem: "Navigation apps treat every drive like you've never been there. Daily commuters don't need turn-by-turn for routes they already know. They need to know when something's wrong.",
-    approach: "An iOS app built with Swift, SwiftUI, and Mapbox that learns your routes and only reroutes when it actually matters. Includes CarPlay support for hands-free use.",
-    outcome: "Currently in development. Private repo.",
-    tags: ["Swift", "SwiftUI", "Mapbox", "CarPlay"],
-    accent: "#5B8DEF",
-  },
-  {
     id: "coil",
-    num: "02",
+    num: "01",
     name: "Coil",
     tagline: "Python-to-executable compiler",
     icon: FileCode2,
@@ -31,7 +18,7 @@ const projects = [
   },
   {
     id: "feather",
-    num: "03",
+    num: "02",
     name: "Feather",
     tagline: "Lightweight bulk image optimizer",
     icon: Layers,
@@ -44,7 +31,7 @@ const projects = [
   },
   {
     id: "file-processor",
-    num: "04",
+    num: "03",
     name: "File Processor",
     tagline: "Network-aware batch converter",
     icon: HardDrive,
@@ -57,7 +44,7 @@ const projects = [
   },
   {
     id: "study-aggregator",
-    num: "05",
+    num: "04",
     name: "Study Aggregator",
     tagline: "DICOM medical imaging processor",
     icon: Activity,

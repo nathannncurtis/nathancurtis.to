@@ -1,5 +1,6 @@
 import Hero from "./sections/Hero";
 import About from "./sections/About";
+import FeaturedSteddi from "./sections/FeaturedSteddi";
 import Projects from "./sections/Projects";
 import Resume from "./sections/Resume";
 import Poetry from "./sections/Poetry";
@@ -25,6 +26,8 @@ export default function App() {
         <Hero />
         <SectionDivider />
         <About />
+        <SectionDivider />
+        <FeaturedSteddi />
         <SectionDivider />
         <Projects />
         <SectionDivider />
