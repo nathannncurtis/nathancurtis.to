@@ -1,11 +1,10 @@
 import { motion } from "motion/react";
-import { Mail, Github, Instagram, ArrowUpRight } from "lucide-react";
+import { Mail, Github, ArrowUpRight } from "lucide-react";
 import TiltCard from "../components/TiltCard";
 
 const links = [
   { label: "Email", value: "nathan@nathancurtis.to", href: "mailto:nathan@nathancurtis.to", icon: Mail },
   { label: "GitHub", value: "nathannncurtis", href: "https://github.com/nathannncurtis", icon: Github },
-  { label: "Instagram", value: "nathanrobertcurtis", href: "https://instagram.com/nathanrobertcurtis", icon: Instagram },
 ];
 
 export default function Contact() {

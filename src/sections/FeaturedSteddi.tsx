@@ -78,7 +78,7 @@ function VariantHero() {
             </div>
 
             <p className="text-lg leading-relaxed mb-6" style={{ color: "var(--fg-secondary)" }}>
-              A navigation app that learns your preferred routes and only suggests reroutes when the time savings actually matter. Built with Swift, SwiftUI, and MapKit — zero external map dependencies, zero logos.
+              Built from scratch in Swift and SwiftUI with MapKit. No third-party map SDKs, no branding, no compromises. Learns your routes, only reroutes when it actually matters, and sweats the details most apps ignore: sunset-synced themes, weather-reactive UI, haptics tuned to turns. Privacy-first, offline-ready, and shipping when it's genuinely ready — not before.
             </p>
 
             <div className="flex flex-wrap gap-2 mb-8 justify-center md:justify-start">
