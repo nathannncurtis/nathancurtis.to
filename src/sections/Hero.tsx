@@ -147,20 +147,23 @@ export default function Hero() {
           {headlineWords.map((word, i) => (
             <motion.span
               key={i}
-              initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+              initial={false}
               animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ delay: 0.4 + i * 0.05, duration: 0.4, ease: "easeOut" }}
               className="inline-block mr-[0.25em]"
-              style={
-                word.highlight
+              style={{
+                opacity: 0,
+                transform: "translateY(20px)",
+                filter: "blur(4px)",
+                ...(word.highlight
                   ? {
                       background: "linear-gradient(135deg, var(--accent-light), var(--accent), var(--accent-warm))",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       paddingBottom: "0.15em",
                     }
-                  : { color: "var(--fg)" }
-              }
+                  : { color: "var(--fg)" }),
+              }}
             >
               {word.text}
             </motion.span>

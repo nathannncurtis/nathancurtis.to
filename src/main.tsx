@@ -9,7 +9,9 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-// Wait for fonts to load, then fade in
+// Wait for fonts + a tick for layout to settle, then fade in
 document.fonts.ready.then(() => {
-  document.getElementById('root')!.classList.add('ready')
+  requestAnimationFrame(() => {
+    document.getElementById('root')!.classList.add('ready')
+  })
 })
