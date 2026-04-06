@@ -3,6 +3,7 @@ import About from "./sections/About";
 import FeaturedSteddi from "./sections/FeaturedSteddi";
 import Projects from "./sections/Projects";
 import Resume from "./sections/Resume";
+import Writing from "./sections/Writing";
 import Poetry from "./sections/Poetry";
 import Contact from "./sections/Contact";
 import Stats from "./sections/Stats";
@@ -42,6 +43,8 @@ export default function App() {
         <Projects />
         <Stats />
         <Resume />
+        <SectionDivider />
+        <Writing />
         <SectionDivider />
         <Poetry />
         <SectionDivider />
