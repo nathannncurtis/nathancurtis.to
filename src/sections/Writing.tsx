@@ -10,6 +10,7 @@ interface Post {
   readTime: string;
   tags: string[];
   body: string;
+  order: number;
 }
 
 // ── load markdown files via vite glob ──────────────────────
@@ -51,6 +52,7 @@ function parseFrontmatter(raw: string): Post | null {
     readTime: meta.readTime || "",
     tags,
     body: match[2].trim(),
+    order: meta.order ? Number(meta.order) : 999,
   };
 }
 
@@ -63,7 +65,9 @@ const allPosts: Post[] = Object.values(mdFiles)
       "December 2025", "November 2025", "October 2025",
       "October 2024",
     ];
-    return dateOrder.indexOf(a.date) - dateOrder.indexOf(b.date);
+    const dateDiff = dateOrder.indexOf(a.date) - dateOrder.indexOf(b.date);
+    if (dateDiff !== 0) return dateDiff;
+    return a.order - b.order;
   });
 
 const FEATURED_COUNT = 3;
