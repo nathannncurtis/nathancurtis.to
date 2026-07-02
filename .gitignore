@@ -27,3 +27,7 @@ nanobanana-output
 .claude
 __pycache__
 Documents/
+
+# local-only source assets (photo originals, legacy)
+originals/
+.agents/

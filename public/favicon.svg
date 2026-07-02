@@ -1,4 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#0C1014"/>
-  <text x="16" y="22" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="400" fill="#4A9A9A">nc</text>
+  <rect width="32" height="32" rx="6" fill="#f8f4ea"/>
+  <g transform="translate(2.6,4.2) scale(0.146)">
+    <path fill="#201d18" d="M4 52 C 14 47, 26 42.5, 38 40 C 43 29, 53 24, 61 25.5 C 69 27, 75 33, 79 41 C 88 43.5, 98 46, 108 50 C 120 55, 132 61, 143 68 L 148 71 L 145 75 C 154 78.5, 162 82, 170 86 C 175 89, 175 94.5, 169 95.5 C 155 91.5, 140 86, 126 80 C 114 87, 100 93, 84 95 C 66 96.5, 52 91, 46 83 C 42.5 77, 41 71, 40 66 C 36 63, 33 60, 31 57.5 C 20 55, 11 53.5, 4 52 Z"/>
+    <g stroke="#201d18" stroke-width="4" stroke-linecap="round" fill="none">
+      <line x1="60" y1="93" x2="57" y2="126"/>
+      <line x1="80" y1="94" x2="83" y2="126"/>
+      <path d="M57 126 L50 132 M57 126 L63 132 M83 126 L76 132 M83 126 L89 132"/>
+    </g>
+    <line x1="4" y1="130" x2="180" y2="130" stroke="#adaba1" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="52" cy="34" r="3" fill="#e9e2d1"/>
+  </g>
 </svg>

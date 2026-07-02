@@ -1,0 +1,168 @@
+                                   __
+                                  ( o>
+                                  )  \
+                                 /_/\_\
+                         ~~~~~~~~~"~~"~~~~~~~~~~
+
+
+                          M A I S O N   N C
+                          · a bill of fare ·
+
+                    est. MMXXIV  ·  Nathan Curtis
+       pictures, poems, songs, software, and the odd good meal
+
+                    order anything, in any order.
+
+
+======================================================================
+
+ APERITIF ...................................................... VERSE
+
+   Burnt Orange
+   Scent of Salt
+   Routine in Green
+   Rings, Not Stories
+
+   ~ the aperitif, poured in full ~
+
+   BURNT ORANGE
+
+   the leaves were always changing,
+   burnt orange, a hue that danced, then drifted,
+   one — a single leaf, swayed, paused,
+   before resting gently on the ground,
+   like a whisper of what's yet to come.
+
+   the seasons shifted, silent, slow,
+   autumn blending into winter's grasp.
+   yet, there's warmth in the cold,
+   a hidden ember beneath the frost,
+   a quiet spring waiting, just out of reach.
+
+   a crow, calm, lands on a powerline,
+   perched in quiet contemplation,
+   its black feathers sharp against the soft orange sky,
+   a fleeting moment, like our first hello,
+   but lasting — etched in memory.
+
+   carefully, calmly, the crow contemplates,
+   clawed feet clutching the cold cable,
+   as we navigate this path,
+   subtle moments of almost-rhyme,
+   but don't, and that's just right.
+
+   the wind, it whispers —
+   carrying us forward, gently,
+   through seasons, through change.
+   the leaf falls again, but not forgotten,
+   transforming, as we have,
+   in every smile, every shared glance —
+   almost like that crow, watching,
+   from its wire, as we navigate this path.
+
+   and now, as the crow takes flight,
+   the burnt orange fades into something new,
+   something we're still discovering, together,
+   in this ever-changing season of friendship.
+
+                              .   .   .
+
+ MAINS ......................................................... WORKS
+
+   Steddi ....................................................... 2026
+     An iOS navigation app for daily commuters.
+
+   mdview ....................................................... 2026
+     A native, cross-platform markdown viewer.
+
+   Study Aggregator ............................................. 2026
+     A DICOM engine that makes slow work disappear.
+
+   Coil ......................................................... 2026
+     Turning ideas into things you can hold.
+
+   Commit Summarizer ............................................ 2026
+     Plain-English notes on what changed, kept in-house.
+
+   Obsidian Vault Sync .......................................... 2026
+     Notes that follow you, no subscription.
+
+   File Processor ............................................... 2025
+     Twenty million pages, handled without fuss.
+
+                              .   .   .
+
+ PLATS ................................................... PHOTOGRAPHS
+
+   thirty-eight frames, in four clusters:
+
+   Alaska ....................................................... 2023
+   Greece ....................................................... 2025
+   The West .............................................. 2017 & 2024
+   Stray Frames ......................................... 2022 to 2024
+
+   the prints live at the house.
+
+                              .   .   .
+
+ DIGESTIF ...................................................... MUSIC
+
+   fEAR oF gOD · a live EP
+     cRYING lOUDLY .............................................. 4:12
+     fALLING dOWN ............................................... 2:01
+     fALSE hARMONIES ............................................ 1:25
+     her ........................................................ 2:46
+     sAYING nOTHING ............................................. 1:30
+     sWING / / sET .............................................. 3:17
+
+   Before · a single
+     Before ..................................................... 4:02
+
+   Terror · a single
+     Terror ..................................................... 2:56
+
+                              .   .   .
+
+ ON THE SIDE ................................................. WRITING
+
+   Building a Parallel OCR Pipeline in One Night .......... April 2026
+   Dropping a 200MB WebView for 285KB of Zig .............. April 2026
+   Rewriting a DICOM Parser in Rust
+     for a 100–400× Speedup ............................... April 2026
+   When to Shell Out to a Native Binary
+     Instead of Using FFI ................................. April 2026
+   Four Apps, One Bundler, and the EDR Alert
+     That Made Everything Better .......................... April 2026
+   Bulk-Updating a Legacy Database
+     Without Breaking the Vendor's App .................... March 2026
+   Why I Self-Hosted Our Office's 2FA Codes ............... March 2026
+   Shipping Desktop Tools to People
+     Who Don't Know What a Terminal Is .................... March 2026
+   Building a Python Compiler Because
+     the Existing Ones Were All Broken ................. February 2026
+   What Breaks When You Process 20 Million Pages ........ January 2026
+   Reverse-Engineering a Proprietary Binary Format
+     to Automate CD Label Printing ...................... October 2024
+
+                              .   .   .
+
+ DESSERT ................................................. THE KITCHEN
+
+   Creamy White Cheddar Bisque ............................ serves 4–6
+     sharp white cheddar, cream, a whisper of bacon
+
+   Dijon–Umami Braised Top Round .......................... serves 4–6
+     low and slow until it gives up and pulls apart
+
+   Roasted Tomatillo Habanero Salsa ....................... serves ~15
+     roasted, blistered, and honestly too hot
+
+======================================================================
+
+   set by hand at the pass. no substitutions, no minimums.
+   the crow keeps the tabs.
+
+                             Come hungry.
+
+                       https://nathancurtis.to
+

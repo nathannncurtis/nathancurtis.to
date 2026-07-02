@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>not on the menu · Nathan Curtis</title>
+  <meta name="robots" content="noindex" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Cormorant+SC:wght@400;500;600&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&family=Tangerine:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --cream:#f8f4ea; --paper:#f4f1e4; --rule:#d4d2cb; --leader:#adaba1;
+      --stone:#65635c; --ink:#2f2e2a; --body:#43403a; --crow:#201d18;
+      --wing:#473d2f; --accent:#a8551f; --accent-deep:#5f2e0f;
+      --shadow-a:rgba(47,46,42,0.10); --shadow-b:rgba(47,46,42,0.08);
+      --pad:clamp(1.5rem, 6vw, 3rem);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --cream:#1b1712; --paper:#14110c; --rule:#3a3328; --leader:#736b5b;
+        --stone:#a59c89; --ink:#ece4d2; --body:#cbc1ab; --crow:#0e0c09;
+        --wing:#8a7c64;
+        --shadow-a:rgba(0,0,0,0.45); --shadow-b:rgba(0,0,0,0.3);
+      }
+      .crow-svg { filter:drop-shadow(0 0 1px rgba(236,228,210,0.22)); }
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html, body { min-height:100%; }
+    body {
+      background:var(--cream); color:var(--ink);
+      font-family:'Spectral', Georgia, serif;
+      display:grid; place-items:center;
+      min-height:100svh; padding:clamp(3.5rem, 9vh, 5.5rem) 1rem 3rem;
+      -webkit-font-smoothing:antialiased;
+    }
+    .stage { position:relative; width:min(620px, 94vw); }
+    .card {
+      position:relative;
+      background:var(--paper);
+      padding:2.4rem var(--pad) 2.9rem;
+      clip-path:polygon(
+        0 0, 58% 0, 61% 10px, 63.5% 5px, 67% 17px, 70.5% 12px,
+        74% 26px, 77.5% 21px, 81% 36px, 84% 31px, 87.5% 47px,
+        90.5% 42px, 94% 59px, 96.5% 55px, 100% 74px,
+        100% 100%, 0 100%
+      );
+      filter:drop-shadow(0 14px 30px var(--shadow-a)) drop-shadow(0 2px 8px var(--shadow-b));
+    }
+    /* the menu line whose leader dots trail off into the tear */
+    .torn-row {
+      display:flex; align-items:baseline; gap:.7rem;
+      margin-right:calc(-1 * var(--pad));
+      font-family:'Cormorant Garamond', Georgia, serif;
+      font-style:italic; font-size:1.05rem; color:var(--body);
+      white-space:nowrap;
+    }
+    .torn-row .no {
+      font-family:'Cormorant SC', 'Cormorant Garamond', serif;
+      font-style:normal; font-size:.78rem; letter-spacing:.14em; color:var(--stone);
+    }
+    .dots {
+      flex:1; min-width:2.5rem; height:.95em;
+      background-image:radial-gradient(circle, var(--leader) 1.2px, transparent 1.5px);
+      background-size:13px 5px; background-repeat:repeat-x; background-position:left 78%;
+    }
+    .rule { border:0; height:1px; background:var(--rule); margin:1.9rem 0; }
+    .rule.tight { margin:1.6rem auto; width:56%; }
+    .kicker {
+      text-align:center;
+      font-family:'Cormorant SC', 'Cormorant Garamond', serif;
+      font-weight:500; font-size:.74rem; letter-spacing:.34em;
+      color:var(--stone); text-transform:lowercase;
+    }
+    h1 {
+      margin-top:1.1rem; text-align:center;
+      font-family:'Cormorant', 'Cormorant Garamond', Georgia, serif;
+      font-style:italic; font-weight:500;
+      font-size:clamp(1.9rem, 6vw, 2.8rem); line-height:1.15;
+      color:var(--ink); text-wrap:balance;
+    }
+    .note {
+      margin:1.15rem auto 0; max-width:36ch; text-align:center;
+      font-size:.92rem; font-weight:300; line-height:1.65; color:var(--stone);
+    }
+    .back-row { text-align:center; }
+    .back {
+      font-family:'Cormorant Garamond', Georgia, serif;
+      font-style:italic; font-size:1.18rem;
+      color:var(--accent); text-decoration:none;
+      border-bottom:1px solid transparent; transition:color .25s, border-color .25s;
+    }
+    .back:hover, .back:focus-visible { color:var(--accent-deep); border-bottom-color:currentColor; }
+    /* the crow, perched on the torn edge — a sibling of the card so the clip can't touch it */
+    .crow-perch {
+      position:absolute; left:calc(74% - 41px); top:-51px;
+      width:108px; pointer-events:none;
+      transform:rotate(10deg); transform-origin:41px 77px;
+    }
+    .crow-svg { display:block; overflow:visible; width:100%; height:auto; }
+    .crow-eye { transform-box:fill-box; transform-origin:center; }
+    @media (prefers-reduced-motion: no-preference) {
+      .crow-eye { animation:blink 6s ease-in-out infinite; }
+    }
+    @keyframes blink {
+      0%, 91%, 98%, 100% { transform:scaleY(1); }
+      94% { transform:scaleY(0.08); }
+    }
+    .sign {
+      margin-top:1.6rem; text-align:center;
+      font-family:'Tangerine', 'Cormorant Garamond', cursive;
+      font-size:1.6rem; color:var(--stone); opacity:.75;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <div class="card">
+      <div class="torn-row" aria-hidden="true">
+        <span class="no">nº 404</span>
+        <span>the page you ordered</span>
+        <span class="dots"></span>
+      </div>
+      <hr class="rule" />
+      <p class="kicker">maison nc &nbsp;·&nbsp; lost page</p>
+      <h1>That dish is no longer served.</h1>
+      <p class="note">Whatever was here has been eaten, crossed off, or carried away. The corner of the menu went with it.</p>
+      <hr class="rule tight" />
+      <p class="back-row"><a class="back" href="/">back to the menu&nbsp;&rarr;</a></p>
+    </div>
+    <div class="crow-perch" aria-hidden="true">
+      <svg class="crow-svg" viewBox="0 0 184 150" xmlns="http://www.w3.org/2000/svg">
+        <!-- the torn-off scrap, carried in the beak -->
+        <path d="M7 47 L-19 41 L-10 66 Z" fill="var(--paper)" stroke="var(--leader)" stroke-width="1" stroke-linejoin="round" />
+        <circle cx="-10" cy="50" r="0.9" fill="var(--leader)" />
+        <circle cx="-5.5" cy="52.5" r="0.9" fill="var(--leader)" />
+        <!-- perched crow, facing left — the motif from "Burnt Orange" -->
+        <path fill="var(--crow)" d="M4 52 C 14 47, 26 42.5, 38 40 C 43 29, 53 24, 61 25.5 C 69 27, 75 33, 79 41 C 88 43.5, 98 46, 108 50 C 120 55, 132 61, 143 68 L 148 71 L 145 75 C 154 78.5, 162 82, 170 86 C 175 89, 175 94.5, 169 95.5 C 155 91.5, 140 86, 126 80 C 114 87, 100 93, 84 95 C 66 96.5, 52 91, 46 83 C 42.5 77, 41 71, 40 66 C 36 63, 33 60, 31 57.5 C 20 55, 11 53.5, 4 52 Z" />
+        <path d="M78 44 C 100 50, 122 62, 142 74" fill="none" stroke="var(--wing)" stroke-opacity="0.38" stroke-width="1.6" stroke-linecap="round" />
+        <g stroke="var(--crow)" stroke-width="2.6" stroke-linecap="round" fill="none">
+          <line x1="60" y1="93" x2="57" y2="126" />
+          <line x1="80" y1="94" x2="83" y2="126" />
+          <path d="M57 126 L50 132 M57 126 L63 132 M83 126 L76 132 M83 126 L89 132" />
+        </g>
+        <circle class="crow-eye" cx="52" cy="34" r="2.4" fill="#e9e2d1" />
+      </svg>
+    </div>
+    <p class="sign">the crow regrets nothing</p>
+  </main>
+</body>
+</html>
