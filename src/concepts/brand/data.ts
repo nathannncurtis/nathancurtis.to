@@ -25,7 +25,7 @@ export const facets: Facet[] = [
   { key: "works", label: "Works", blurb: "Things I've built that quietly work.", count: "7 projects" },
   { key: "verse", label: "Verse", blurb: "Poems, mostly about water and weather.", count: "4 poems" },
   { key: "photographs", label: "Photographs", blurb: "Light, caught and kept.", count: "38 frames" },
-  { key: "writing", label: "Writing", blurb: "Essays and field notes.", count: "11 pieces" },
+  { key: "writing", label: "Writing", blurb: "Essays and field notes.", count: "12 pieces" },
   { key: "music", label: "Music", blurb: "Songs and sounds I've made.", count: "1 EP, 2 singles" },
   { key: "kitchen", label: "Kitchen", blurb: "Dinners worth repeating.", count: "3 recipes" },
   { key: "next", label: "& Next", blurb: "Whatever I get into next.", count: "ongoing" },

@@ -125,6 +125,8 @@
 
  ON THE SIDE ................................................. WRITING
 
+   Teaching a Vision Model to Verify Records
+     the Way a Clerk Does .................................. July 2026
    Building a Parallel OCR Pipeline in One Night .......... April 2026
    Dropping a 200MB WebView for 285KB of Zig .............. April 2026
    Rewriting a DICOM Parser in Rust

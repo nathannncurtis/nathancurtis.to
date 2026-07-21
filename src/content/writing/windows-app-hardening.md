@@ -12,7 +12,7 @@ Microsoft Defender started flagging four of my internal Python apps. None of the
 
 Defender for Endpoint tagged four of my internal Windows apps under three MITRE ATT&CK techniques: T1059.006 (Python execution), T1053.005 (Scheduled Task persistence), and T1036.005 (Masquerading).
 
-Not malware. But from an EDR's perspective? Fair. These apps were shelling out to `schtasks`, `tasklist`, `taskkill`, and `powershell`. They were running binaries named things like `reg.exe` and `unreg.exe`. They were installing into `%APPDATA%\Roaming` — a path beloved by actual malware for persistence. The behavioral signature was "generic commodity RAT" whether I liked it or not.
+Not malware. But from an EDR's perspective? Fair. These apps were shelling out to `schtasks`, `tasklist`, `taskkill`, and `powershell`. They were running binaries named things like `reg.exe` and `unreg.exe`. They were installing into `%APPDATA%\Roaming`, a path beloved by actual malware for persistence. The behavioral signature was "generic commodity RAT" whether I liked it or not.
 
 The goal was straightforward: make the apps look legitimate and behave cleanly, without changing anything a user would notice.
 
@@ -31,7 +31,7 @@ All four deploy to internal Windows clients, auto-update from a network share, a
 
 Every app got the same retrofit. Not because I love repetition, but because the smell was the same in each case and the fix was the same too.
 
-**Install location moved from `%APPDATA%\Roaming\<App>\` to `%LOCALAPPDATA%\Programs\<Vendor>\<App>\`.** Stops looking like malware persistence. Matches the Squirrel.Windows / Electron per-user install convention — VS Code, Slack, and GitHub Desktop all install here.
+**Install location moved from `%APPDATA%\Roaming\<App>\` to `%LOCALAPPDATA%\Programs\<Vendor>\<App>\`.** Stops looking like malware persistence. Matches the Squirrel.Windows / Electron per-user install convention. VS Code, Slack, and GitHub Desktop all install here.
 
 **Binary renames away from system-binary-adjacent names.** `reg.py` and `unreg.py` became `<app>_setup_helper.py` and `<app>_uninstall_helper.py`. The T1036.005 masquerading signal goes away entirely.
 
@@ -44,13 +44,13 @@ Every app got the same retrofit. Not because I love repetition, but because the 
 
 Zero LOLBIN telemetry from the runtime. Every one of those CLI invocations was a row in someone's SIEM. Now they don't exist.
 
-**Subprocess supervision via Windows Job Objects** (`KILL_ON_JOB_CLOSE`) for apps that spawn long-running children — the hotkey app with AHK, the imaging tool with the Rust engine. When the parent dies for any reason, the kernel kills everything in the Job. No orphan AHK firing hotkeys forever. No zombie engine deadlocked on a pipe write. This is kernel-enforced and effectively impossible to bypass, which makes it strictly better than an `atexit` handler that only runs if Python exits cleanly.
+**Subprocess supervision via Windows Job Objects** (`KILL_ON_JOB_CLOSE`) for apps that spawn long-running children. The hotkey app spawns AHK, the imaging tool spawns the Rust engine. When the parent dies for any reason, the kernel kills everything in the Job. No orphan AHK firing hotkeys forever. No zombie engine deadlocked on a pipe write. This is kernel-enforced and effectively impossible to bypass. An `atexit` handler only runs if Python exits cleanly; this always runs.
 
-**psutil orphan-cleanup at startup** to handle pre-Job-Object orphans left behind by earlier installs. Multi-signal pattern matching — exe path plus cmdline args plus script names — so a user's personal AHK install doesn't get swept up.
+**psutil orphan-cleanup at startup** to handle pre-Job-Object orphans left behind by earlier installs. Multi-signal pattern matching (exe path, cmdline args, script names) so a user's personal AHK install doesn't get swept up.
 
 **Unified logging via `RotatingFileHandler`** (5 MB × 3) at the install dir. Every `except Exception: pass` replaced with `logger.exception(...)`. I had put this off for too long. The EDR alert was what made me finally do it.
 
-**Inno Setup installer rewritten with four-layer legacy cleanup** — `[InstallDelete]`, `[Registry] deletekey uninsdeletekey`, `[Code]` block calling `schtasks /Delete`, `[UninstallDelete]` sweep — so existing users migrate cleanly. Plus a native Win32 `TerminateProcess` block via kernel32 externals for fast install-time shutdown of pystray-based trays. Pystray doesn't respond to `WM_CLOSE`, and without this the installer would hang for 30 seconds waiting for a graceful exit that was never coming.
+**Inno Setup installer rewritten with four-layer legacy cleanup** (`[InstallDelete]`, `[Registry] deletekey uninsdeletekey`, a `[Code]` block calling `schtasks /Delete`, and an `[UninstallDelete]` sweep) so existing users migrate cleanly. Plus a native Win32 `TerminateProcess` block via kernel32 externals for fast install-time shutdown of pystray-based trays. Pystray doesn't respond to `WM_CLOSE`, and without this the installer would hang for 30 seconds waiting for a graceful exit that was never coming.
 
 **EV-cert-ready signing pipeline.** Every build script and CI file got an "EV CERT MIGRATION" banner so the eventual cert swap is one line per app, the day the cert lands.
 
@@ -58,7 +58,7 @@ Zero LOLBIN telemetry from the runtime. Every one of those CLI invocations was a
 
 This is where it got interesting.
 
-[Coil](https://github.com/nathannncurtis/coil) is my Python-to-Windows-exe bundler. All four apps use it. The hardening pass exposed a pile of Coil quirks that every project was working around independently — boilerplate at the top of every `.py` file, manual post-build cleanup scripts, hand-maintained dependency lists despite an `auto = true` flag that was supposed to handle that.
+[Coil](https://github.com/nathannncurtis/coil) is my Python-to-Windows-exe bundler. All four apps use it. The hardening pass exposed a pile of Coil quirks that every project was working around independently: boilerplate at the top of every `.py` file, manual post-build cleanup scripts, hand-maintained dependency lists despite an `auto = true` flag that was supposed to handle that.
 
 Rather than permanently bake those workarounds into the four apps, the work pivoted upstream.
 
@@ -68,7 +68,7 @@ Task Manager was showing every bundled exe as "Python" instead of the app's real
 
 ### Dependency resolver via `importlib.metadata.packages_distributions()`
 
-Every project had a hand-maintained `include = ["pywin32", "windows-toasts", ...]` list despite Coil having an `auto = true` flag. The resolver was missing pywin32 because its submodules were being mis-identified as PyPI packages — there's no `win32pipe` on PyPI. The fix was to walk distributions properly. Every `include = []` list downstream is now empty.
+Every project had a hand-maintained `include = ["pywin32", "windows-toasts", ...]` list despite Coil having an `auto = true` flag. The resolver was missing pywin32 because its submodules were being mis-identified as PyPI packages. There's no `win32pipe` on PyPI. The fix was to walk distributions properly. Every `include = []` list downstream is now empty.
 
 ### `.pth` file processing and DLL directory registration
 
@@ -110,12 +110,12 @@ A few lessons from this I'd want to remember:
 
 **Job Objects are an underused Windows feature.** Most Python-on-Windows code doesn't touch them. For any process that spawns children that would be harmful as orphans, they're the kernel-enforced version of cleanup. You can't forget to call them. You can't bypass them with a hard kill. They just work.
 
-**Native Win32 beats LOLBINs even at install time.** An installer shelling out to `taskkill` is "expected behavior" in the sense that nobody will blame you for it — but it still emits EDR telemetry. Pure Win32 calls via Inno Setup's external-DLL imports work just as well, take milliseconds rather than seconds, and leave no signal.
+**Native Win32 beats LOLBINs even at install time.** An installer shelling out to `taskkill` is "expected behavior" in the sense that nobody will blame you for it. But it still emits EDR telemetry. Pure Win32 calls via Inno Setup's external-DLL imports work just as well, take milliseconds instead of seconds, and leave no signal.
 
 **The cascade matters.** The hardening exposed Coil bugs. Fixing Coil eliminated downstream boilerplate. Each Coil release made the next downstream cleanup smaller. The whole project got better as it went instead of accreting. This is the opposite of how most refactors feel, and it's worth noticing when it happens.
 
 ## Outcomes
 
-Four apps, all hardened and clean, installers ready for the EV-cert tagging round once the cert lands. Coil went from 0.1.1 to 0.2.4 over the course of this work — ten PRs across three PyPI releases. Test suite sits at 312/0 green. Three open issues closed (#10, #11, #14) with code rather than documentation. Zero EDR alerts from post-hardening builds — validated locally, full validation pending production rollout.
+Four apps, all hardened and clean, installers ready for the EV-cert tagging round once the cert lands. Coil went from 0.1.1 to 0.2.4 over the course of this work: ten PRs across three PyPI releases. Test suite sits at 312/0 green. Three open issues closed (#10, #11, #14) with code rather than documentation. Zero EDR alerts from post-hardening builds, validated locally, with full validation pending production rollout.
 
 The alert was annoying at 8 AM on a Tuesday. By the time it was resolved, four apps were better, one bundler was better, and the next ten apps I write will inherit everything.
