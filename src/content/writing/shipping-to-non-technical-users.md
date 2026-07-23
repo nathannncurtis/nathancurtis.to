@@ -5,43 +5,47 @@ readTime: "5 min"
 tags: ["Deployment", "Windows", "Inno Setup"]
 ---
 
-## The audience
+## The interface contract
 
-The tools I build are used by people who process documents, manage case files, and operate scanners. They don't know what Python is. They don't know what a terminal is. They know how to double-click an icon and right-click a folder. That's the interface contract.
+The people who use my tools process documents, manage case files, and run scanners. They don't know what Python is. They don't know what a terminal is. They know two gestures: double-click an icon, right-click a folder. That is the entire interface I'm allowed to use.
 
-For the people using these tools, that's the reality. I personally prefer a TUI over a GUI any day, but the audience here isn't developers. It's office staff running document workflows. For them, if a tool requires opening a command prompt or installing a runtime, it's not getting used. Here's what the deployment pipeline looks like when "just pip install it" isn't an option.
+I'd personally rather live in a TUI, and for me that's the faster tool by a mile. But the audience isn't me and it isn't developers. It's office staff running document workflows all day, and for them a tool that requires a command prompt or a runtime install is a tool that never gets opened once. So the whole deployment story bends around those two gestures and nothing else. Here's what that looks like when "just pip install it" was never on the table.
 
-## The installer
+## Make it install like everything else
 
-Every tool ships as a single setup .exe built with [Inno Setup](https://jrsoftware.org/isinfo.php). Inno Setup is a free, scriptable installer compiler that's been around since 1997. The scripting language takes some getting used to, but once you have a working .iss file, it produces the same installer every time. Reliable and battle-tested.
+Every tool ships as a single setup .exe built with [Inno Setup](https://jrsoftware.org/isinfo.php). It's free, scriptable, and has been compiling Windows installers since 1997. The scripting language takes some getting used to, but a working .iss file produces the same installer every time, and then you stop thinking about it.
 
-The installer handles:
+The installer does what a user already expects an installer to do:
 
-- **Per-user or system-wide install.** Per-user installs to `%APPDATA%` and don't need admin rights. System-wide installs to `%PROGRAMFILES%` and do. Default to per-user because most users don't have admin.
-- **File association.** Study Aggregator registers itself as a handler for DICOM-related files and adds a right-click context menu entry on folders and ZIP files.
-- **Start menu and desktop shortcuts.** Optional, but users expect them.
-- **Uninstaller.** Inno Setup generates one automatically. Clean removal, no leftover files.
+- **Per-user by default.** Installs to a per-user location with no admin rights required, because most of these users don't have admin. System-wide is available for the machines that want it.
+- **File and folder associations.** Study Aggregator registers as a handler for the file types it reads and adds a right-click entry on folders and ZIP files.
+- **Shortcuts.** Start menu and desktop, optional, because people look for them.
+- **A real uninstaller.** Inno generates one automatically. Clean removal, nothing left behind.
 
-The installer script is a .iss file. Once it's set up, you don't touch it unless the install layout changes.
+None of this is clever, and that's the point. The tool should be indistinguishable from any other app the user has ever installed.
 
-## Context menu integration
+## Right-click is the whole product
 
-The most important UX decision I made was adding right-click context menu entries. Study Aggregator and File Processor both register context menu items on folders and specific file types.
+The single most important decision in any of these tools is the right-click menu. Study Aggregator and File Processor both register context-menu entries on folders and on the file types they handle.
 
-For Windows, this means writing registry entries during install:
+On Windows that's a couple of registry keys written at install time:
 
 - `HKCU\Software\Classes\Directory\shell\MyApp` for folders
-- `HKCU\Software\Classes\.zip\shell\MyApp` for file types
+- `HKCU\Software\Classes\.zip\shell\MyApp` for a file type
 
-The value points to the executable with a `"%1"` argument placeholder. When the user right-clicks a folder and selects your tool, Windows launches it with the folder path as the first argument.
+The command points at the executable with a `"%1"` placeholder, and when the user picks the entry, Windows launches the tool with the folder or file path as its first argument.
 
-This is the difference between "open the app, click browse, navigate to the folder, click open" and "right-click, click." Four steps become two. For tools that process hundreds of folders a day, that matters.
+That one registry key changes the entire shape of the work. Without it, using the tool is: open the app, click Browse, navigate to the folder, click Open, click Go. With it: right-click the folder, click the entry. Five steps become two. For someone processing a handful of folders a day, that's a nicety. For someone doing hundreds, it's the difference between a tool they use and a tool they quietly stop opening because the ceremony isn't worth it. The context menu is where these tools actually live. Everything else is plumbing that gets them there.
 
-## Auto-updates
+## Updates that don't interrupt
 
-Study Aggregator checks for updates by polling the GitHub Releases API every 10 minutes via a scheduled task. If a new version is available, it shows a Windows notification with an "Update Now" button. Clicking it downloads the new installer and runs it silently.
+The tools have to update themselves, because the users won't do it manually. The rules I settled on:
 
-The update check is a single HTTPS request:
+- **Never check on launch.** It adds startup latency and fails when there's no network, at the exact moment someone is trying to get work done.
+- **Never auto-install.** Show a notification and let the user pick the moment. Forcing an update on someone halfway through a batch of files is hostile.
+- **Keep the version marker dumb.** A `version.txt` in the install directory. No registry entry to go stale.
+
+The first version of this was a per-app scheduled task that polled the GitHub Releases API every ten minutes and raised a Windows notification with an "Update Now" button:
 
 ```python
 response = requests.get(
@@ -54,22 +58,14 @@ if latest != current:
     show_update_notification(latest, latest_asset_url)
 ```
 
-The key decisions:
+It worked. But every app scheduling its own task means a pile of near-identical tasks all doing the same thing, and that per-app Scheduled Task is exactly what later got these apps flagged by Defender (a story for a different post). It's since collapsed into a single per-machine agent that checks every installed app against a known location and fires the toast. The user sees the same behavior; there's one mechanism now instead of one per app. The principle held; the plumbing got simpler.
 
-- **Don't auto-install.** Show a notification and let the user choose when to update. Forcing an update while someone is in the middle of processing files is hostile.
-- **Don't check on every launch.** A scheduled task on an interval (every 10 minutes in my case) is cleaner. Checking on launch adds startup latency and fails when there's no network.
-- **Keep version.txt in the install directory.** Simple, portable, no registry dependency.
-
-## The network share deploy
-
-For org-internal tools, there's a second distribution channel: a network share. The CI pipeline (GitHub Actions with a self-hosted runner) builds the installer, signs it, and copies it to a known UNC path. The update checker on office machines polls that path instead of GitHub.
-
-This means the update pipeline is: push a tag, CI builds and deploys, machines pick it up within 24 hours. No manual distribution, no walking around with USB drives, no emailing setup files.
+For org-internal tools the source is a network share instead of GitHub. CI builds the installer, signs it, and drops it plus a version marker on a known UNC path, and the agent picks it up from there. Push a tag, and the office machines are current within a day. No walking around with a USB stick, no emailing setup files.
 
 ## What matters
 
-None of this is technically interesting. Inno Setup is ancient. Registry entries are basic. Polling for updates is the simplest possible approach.
+None of this is technically interesting. Inno Setup is ancient. Registry entries are basic. Polling for a new version is the dumbest mechanism that could possibly work.
 
-But it works for the audience. The tools install like any other Windows app. They update themselves. They integrate into the workflow (right-click a folder, get a result). Nobody has to learn anything new.
+But it fits the audience. The tools install like any other Windows app, they update themselves without nagging, and they show up in the right-click menu where the work already happens. Nobody has to learn anything new to get their job done.
 
 That's the job. Not making it clever. Making it invisible.

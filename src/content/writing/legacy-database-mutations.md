@@ -1,19 +1,21 @@
 ---
 title: "Bulk-Updating a Legacy Database Without Breaking the Vendor's App"
 date: "March 2026"
-readTime: "5 min"
+readTime: "6 min"
 tags: ["C#", "SQL Server", "Production"]
 ---
 
 ## The situation
 
-You have a production SQL Server database. It's owned by a vendor application that's been running for years. You need to bulk-update thousands of records across multiple related tables. The vendor doesn't expose an API for this. The only supported way to make changes is through the vendor's GUI, one record at a time.
+You have a production SQL Server database. It's owned by a vendor application that's been running for years. You need to bulk-update thousands of records across related tables, and the vendor doesn't expose an API for it. The only supported way to change a record is through their GUI, one at a time.
 
-Doing 10,000 records one-at-a-time through a GUI is not an option. So you write a tool that talks to the database directly. The catch: you don't own the schema, you don't have documentation for it, and if you break something, the vendor's application stops working and you get to explain why.
+Ten thousand records through a GUI is not happening. So you write a tool that talks to the database directly. The catch is the part that keeps you up at night: you don't own the schema, you have no documentation for it, and if you corrupt something the vendor's application depends on, that application stops working and you are the one explaining why.
 
-## Reverse-engineering the schema
+Everything below is about working inside that constraint.
 
-Step one is understanding what you're touching. SQL Server makes this easier than most databases because you can query the system catalog:
+## You don't get a schema
+
+There's no ER diagram and no data dictionary. What you have is the live catalog, and on SQL Server that's enough to start pulling threads:
 
 ```sql
 -- Find all tables that reference a specific column name
@@ -24,17 +26,17 @@ WHERE c.COLUMN_NAME LIKE '%Attorney%'
 ORDER BY t.TABLE_NAME
 ```
 
-The vendor's naming conventions (once you spot them) tell you a lot. Tables prefixed with the same word are usually related. Columns named "ID" with matching names across tables are foreign keys, even when the schema doesn't declare them as such. Columns named "Additional1" through "Additional10" are the extensibility mechanism the vendor built when they realized customers would need custom fields.
+The naming conventions are the only documentation you get, so you read them like tea leaves. Tables sharing a prefix are usually the same subsystem. A column called `AttorneyID` in one table and `AttorneyID` in another is a foreign key, whether or not the schema bothers to declare the constraint (it usually won't). And then there are the columns named `Additional1` through `Additional10`.
 
-Those "Additional" columns are exactly what the tool updates. The vendor intended them to be user-configurable through their GUI. The tool just does it at scale.
+Those ten columns told me more about the vendor than any doc could have. They're the escape hatch someone added the day they realized every customer would demand a custom field they'd never anticipated: generic, numbered, untyped, waiting to be assigned a meaning per install. They were also exactly what I needed to touch. The vendor built them to be user-configurable through the GUI, so the tool just configures them at scale. That's the whole trick. Find the part of the schema the vendor already intended people to edit, and edit only that. The moment you're writing to a column the GUI never exposes, you've stopped extending the vendor's tool and started fighting it.
 
-## The safety model
+## Write as if the GUI were watching
 
-The tool uses a three-layer safety approach:
+One principle governs the entire tool: never do anything the vendor's own GUI couldn't have done. Every safety measure below is a consequence of that one rule.
 
-**1. Preview before commit.** Every bulk operation runs a SELECT first to show exactly which records will be affected and what the old values are. The user reviews the preview before any UPDATE runs. No blind writes.
+**Preview before commit.** Every bulk operation runs a SELECT first and shows exactly which records will change and what the old values are. The user reads the preview and approves it before a single UPDATE runs. No blind writes.
 
-**2. Transaction wrapping.** Every batch of updates runs inside a transaction. If any single update fails, the entire batch rolls back. You don't end up with 5,000 records updated and 5,000 in the old state.
+**Wrap every batch in a transaction.** If any update in the batch fails, the whole batch rolls back. You never end up with 5,000 records changed and 5,000 left behind in the old state.
 
 ```csharp
 using var transaction = connection.BeginTransaction();
@@ -56,14 +58,24 @@ catch
 }
 ```
 
-**3. Parameterized queries only.** Every value goes through SqlCommand parameters. Never string interpolation, never concatenation. This isn't just about SQL injection (though that matters). It's about data types. A parameter with a DateTime value will always be handled correctly by the driver. A string-interpolated date might work on your machine and break on a server with different locale settings.
+**Parameters, never string-building.** Every value goes through a `SqlCommand` parameter. This is partly about SQL injection, but the bigger reason is data types. A `DateTime` passed as a parameter is handled correctly by the driver every time. A date built into a string by hand works on your machine and then breaks on a server with a different locale, and you find out in production.
 
-## What I learned
+**Stay inside GUI-plausible values.** A column that allows 500 characters doesn't mean the GUI can render 500. A nullable column doesn't mean the application tolerates a null. The database's limits are always wider than the application's, and the application is the one that has to keep working. Ask what a user could have typed into that field by hand, and don't exceed it.
 
-**Test against a restored backup, not production.** This sounds obvious but the temptation to "just try one record" in production is real. Restore a backup to a test instance. Run the tool against that. Verify the results in the vendor's GUI. Then run against production.
+## Test against a restored backup, not production
 
-**Log every mutation.** Every UPDATE the tool runs gets logged with the table, the record ID, the column, the old value, and the new value. If something goes wrong six months later, you can trace exactly what changed and when.
+This sounds obvious and the temptation to "just try one record" in production is still real. Restore a backup to a test instance. Run the tool against that. Open the vendor's GUI and confirm the records look right from the application's side, not just the database's. Then, and only then, point it at production. The test that matters isn't "did the UPDATE succeed," it's "does the vendor's app still behave as if a human made the change."
 
-**Respect the vendor's constraints.** Just because a column allows 500 characters doesn't mean the vendor's GUI can display 500 characters. Just because a column is nullable doesn't mean the vendor's application handles nulls. Stay within the bounds of what the GUI would allow, even when the database technically allows more.
+## The schema will move under you
 
-**The vendor will upgrade the schema.** It happened twice. Both times, columns moved and table names changed. The tool broke. The fix was to make the column mappings configurable instead of hardcoded. Now a schema change is a config file update, not a code change.
+This is the one I learned the hard way, and it's the reason the tool is built the way it is now.
+
+The vendor upgrades their application, and when they do, the schema comes along for the ride. It happened to me twice. Columns I depended on moved. Tables got renamed. Both times, a tool that had run cleanly for months threw on the first batch, because it was pointed at a schema that no longer existed.
+
+The first time, I fixed it the fast way: found the renamed objects, patched the queries, redeployed. The second time, I stopped treating it as a bug and started treating it as a certainty. The table and column names came out of the code and went into a config file. Now a vendor upgrade that reshuffles the schema is a config edit. No recompile, no redeploy, and anyone can make the change, not just me.
+
+Log every mutation while you're at it. Each UPDATE records the table, the record ID, the column, the old value, and the new value. When someone asks six months later what changed a particular field, the answer is a query against the log, not a shrug.
+
+## The goal
+
+The vendor still doesn't know the tool exists, and that's the measure of success. The database changes by the thousands, and from inside their application nothing looks any different than if a very fast, very careful clerk had gone in and done it all by hand.
