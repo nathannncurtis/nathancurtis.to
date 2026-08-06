@@ -534,20 +534,6 @@ function FlightCrow({ night }: { night: boolean }) {
       return ((Math.round(verseEl.scrollLeft / b) % N) + N) % N;
     };
     const noteVerse = (active: number) => { if (!dep.done && active === 1 && versePoem() === 0) dep.seen = true; };
-    // THE CALL — the site's entire sound design: one low call at the moment of
-    // departure, from whichever bird is on duty (night read off the DOM, in
-    // lock-step with the lamp). By day a distant caw; at night the owl's "who".
-    // Created lazily; every failure mode (missing file, autoplay refusal, no
-    // Audio) is swallowed — the site behaves identically without the files.
-    const birdCall = () => {
-      const isNight = !!document.querySelector(".bof-root[data-night]");
-      try {
-        const call = new Audio(isNight ? "/owl-call.mp3" : "/crow-call.mp3");
-        call.volume = isNight ? 0.25 : 0.18;
-        call.onerror = () => {}; // 404: stay silent, no console spam
-        call.play().catch(() => {}); // autoplay policy may refuse: stay silent
-      } catch { /* stay silent */ }
-    };
     // a loop-back to Burnt Orange can happen without any page scroll — watch the
     // carousel itself so a sideways return still counts as having seen it.
     const onVerseScroll = () => noteVerse(activeStation());
@@ -629,7 +615,6 @@ function FlightCrow({ night }: { night: boolean }) {
       if (changed && prev === 1 && active === 2 && dep.seen && !dep.done) {
         dep.done = true;
         dep.away = true;
-        birdCall(); // the site's one sound — the on-duty bird's, quiet, may silently no-op
         if (!reduceRef.current) {
           const fwd = sx.get() >= 0 ? -1 : 1; // the way it faces (sx 1 looks left)
           // off-screen point above the top edge with a slight forward arc; a
