@@ -1,5 +1,8 @@
 // Shared content for the rebrand. Real content across mediums.
 
+import { explicationIndex, recipeIndex, writingIndex } from "virtual:content-index";
+import { markdownBody, slugify } from "../../content/frontmatter";
+
 export const identity = {
   name: "Nathan Curtis",
   initials: "NC",
@@ -110,7 +113,7 @@ export const photos: Photo[] = photoRows.map((r) => ({
 export interface Verse {
   title: string;
   stanzas: string[]; // each stanza is a multi-line string ("\n" separated)
-  analysis?: string;
+  explication?: string; // slug of the long-form analysis, fetched when opened
 }
 
 export const verse: Verse[] = [
@@ -168,16 +171,13 @@ export const verse: Verse[] = [
   },
 ];
 
-// Attach each poem's explication (long-form analysis) from src/content/explications/<slug>.md
-const explicationFiles = import.meta.glob("../../content/explications/*.md", { query: "?raw", eager: true }) as Record<string, { default: string }>;
-const explications: Record<string, string> = {};
-for (const [path, mod] of Object.entries(explicationFiles)) {
-  const slug = (path.split("/").pop() || "").replace(/\.md$/, "");
-  explications[slug] = mod.default;
-}
+// Note which poems have an explication at src/content/explications/<slug>.md.
+// The poem only needs to know one exists — a dozen pages of notes shouldn't
+// ride along on the chance someone opens the notebook.
+const explicated = new Set(explicationIndex.map((e) => e.slug));
 for (const v of verse) {
-  const a = explications[slugify(v.title)];
-  if (a) v.analysis = a;
+  const slug = slugify(v.title);
+  if (explicated.has(slug)) v.explication = slug;
 }
 
 // Hand-curated marginalia (one pass per poem from its explication): lines to
@@ -355,27 +355,11 @@ export const music: Release[] = [
   },
 ];
 
-// ── Markdown loader (writings + recipes) ───────────────────────────────────
-function splitFrontmatter(raw: string): { meta: Record<string, string>; body: string } | null {
-  const normalized = raw.replace(/\r\n/g, "\n");
-  const match = normalized.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
-  if (!match) return null;
-  const meta: Record<string, string> = {};
-  for (const line of match[1].split("\n")) {
-    const idx = line.indexOf(":");
-    if (idx === -1) continue;
-    const key = line.slice(0, idx).trim();
-    let val = line.slice(idx + 1).trim();
-    if (val.startsWith('"') && val.endsWith('"')) val = val.slice(1, -1);
-    meta[key] = val;
-  }
-  return { meta, body: match[2].trim() };
-}
-
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "untitled";
-}
-
+// ── Writings + recipes: the rows now, the bodies when ordered ───────────────
+// Everything a closed menu row shows is cut at build time by
+// vite/content-index.ts and arrives here as plain data. The prose itself sits
+// behind a lazy glob below — one chunk per file, fetched on the click that
+// opens it.
 export interface Writing {
   slug: string;
   title: string;
@@ -383,11 +367,9 @@ export interface Writing {
   year: string;
   readTime: string;
   tags: string[];
-  body: string;
+  excerpt: string; // cut at build; the body it came from arrives later
   order: number;
 }
-
-const writingFiles = import.meta.glob("../../content/writing/*.md", { query: "?raw", eager: true }) as Record<string, { default: string }>;
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 function dateRank(date: string): number {
@@ -397,22 +379,7 @@ function dateRank(date: string): number {
   return year * 12 + (month >= 0 ? month : 0);
 }
 
-export const writings: Writing[] = Object.values(writingFiles)
-  .map((m) => {
-    const fm = splitFrontmatter(m.default);
-    if (!fm) return null;
-    const { meta, body } = fm;
-    const title = meta.title || "Untitled";
-    const date = meta.date || "";
-    let tags: string[] = [];
-    const tm = m.default.match(/tags:\s*\[([^\]]*)\]/);
-    if (tm) tags = tm[1].split(",").map((t) => t.trim().replace(/"/g, "")).filter(Boolean);
-    return {
-      slug: slugify(title), title, date, year: date.split(" ").pop() || "",
-      readTime: meta.readTime || "", tags, body, order: meta.order ? Number(meta.order) : 999,
-    } as Writing;
-  })
-  .filter((w): w is Writing => w !== null)
+export const writings: Writing[] = [...writingIndex]
   .sort((a, b) => { const d = dateRank(b.date) - dateRank(a.date); return d !== 0 ? d : a.order - b.order; });
 
 export interface Recipe {
@@ -420,17 +387,79 @@ export interface Recipe {
   title: string;
   note: string;
   serves: string;
-  body: string;
 }
 
-const recipeFiles = import.meta.glob("../../content/recipes/*.md", { query: "?raw", eager: true }) as Record<string, { default: string }>;
+export const recipes: Recipe[] = [...recipeIndex].sort((a, b) => a.title.localeCompare(b.title));
 
-export const recipes: Recipe[] = Object.values(recipeFiles)
-  .map((m) => {
-    const fm = splitFrontmatter(m.default);
-    if (!fm) return null;
-    const { meta, body } = fm;
-    return { slug: slugify(meta.title || "Untitled"), title: meta.title || "Untitled", note: meta.note || "", serves: meta.serves || "", body } as Recipe;
-  })
-  .filter((r): r is Recipe => r !== null)
-  .sort((a, b) => a.title.localeCompare(b.title));
+// ── The bodies, fetched when ordered ───────────────────────────────────────
+// Non-eager globs: each markdown file becomes its own little chunk, and none of
+// them is in the bundle the front door serves. The first ask fetches, every ask
+// after reads the cache, and listeners hear about a plate landing so the row
+// that asked can paint it.
+export type BodyKind = "writing" | "recipe" | "explication";
+
+type RawModule = { default: string };
+const BODY_FILES: Record<BodyKind, Record<string, () => Promise<RawModule>>> = {
+  writing: import.meta.glob<RawModule>("../../content/writing/*.md", { query: "?raw" }),
+  recipe: import.meta.glob<RawModule>("../../content/recipes/*.md", { query: "?raw" }),
+  explication: import.meta.glob<RawModule>("../../content/explications/*.md", { query: "?raw" }),
+};
+const BODY_DIRS: Record<BodyKind, string> = { writing: "writing", recipe: "recipes", explication: "explications" };
+
+const bodyKey = (kind: BodyKind, slug: string) => `${kind}/${slug}`;
+
+// the slug is what the page holds; the filename is what disk holds
+const bodyFile = new Map<string, string>();
+for (const w of writingIndex) bodyFile.set(bodyKey("writing", w.slug), w.file);
+for (const r of recipeIndex) bodyFile.set(bodyKey("recipe", r.slug), r.file);
+for (const e of explicationIndex) bodyFile.set(bodyKey("explication", e.slug), e.file);
+
+const bodies = new Map<string, string>();
+const ordered = new Map<string, Promise<string>>();
+const listeners = new Set<() => void>();
+let served = 0;
+
+export function cachedBody(kind: BodyKind, slug: string): string | undefined {
+  return bodies.get(bodyKey(kind, slug));
+}
+
+// a count of plates served, not the plates themselves — subscribers read the
+// cache for what they wanted
+export function bodyVersion(): number {
+  return served;
+}
+
+export function onBodyLoaded(fn: () => void): () => void {
+  listeners.add(fn);
+  return () => { listeners.delete(fn); };
+}
+
+export function loadBody(kind: BodyKind, slug: string): Promise<string> {
+  const k = bodyKey(kind, slug);
+  const done = bodies.get(k);
+  if (done !== undefined) return Promise.resolve(done);
+  const pending = ordered.get(k);
+  if (pending) return pending;
+  const file = bodyFile.get(k);
+  const fetchIt = file ? BODY_FILES[kind][`../../content/${BODY_DIRS[kind]}/${file}`] : undefined;
+  if (!fetchIt) return Promise.resolve("");
+  const p = fetchIt()
+    .then((m) => {
+      const body = markdownBody(m.default);
+      bodies.set(k, body);
+      ordered.delete(k);
+      served += 1;
+      for (const fn of listeners) fn();
+      return body;
+    })
+    .catch(() => { ordered.delete(k); return ""; });
+  ordered.set(k, p);
+  return p;
+}
+
+// The printed sheet carries the recipes in full and a guest can hit Ctrl-P at
+// any moment, so all three come out of the kitchen just after first paint —
+// three small chunks, not three bodies in the bundle.
+export function loadRecipeBodies(): Promise<unknown> {
+  return Promise.all(recipes.map((r) => loadBody("recipe", r.slug)));
+}
