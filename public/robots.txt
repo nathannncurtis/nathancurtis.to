@@ -1,0 +1,53 @@
+# the house is open. everything on the menu is public, and it is meant to be read
+# by people and machines alike. nothing here is disallowed, on purpose.
+
+User-agent: *
+Allow: /
+
+# the AI and LLM crawlers, welcomed by name so there is no ambiguity about it.
+# Google-Extended and Applebot-Extended are training-preference tokens rather
+# than crawlers, but they read this file the same way, so they get a place set too.
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+Sitemap: https://nathancurtis.to/sitemap.xml

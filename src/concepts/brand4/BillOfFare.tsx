@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useMemo, useCallback, type ReactNode, type CSSProperties, type DragEvent } from "react";
+import { useRef, useState, useEffect, useMemo, useCallback, useSyncExternalStore, type ReactNode, type CSSProperties, type DragEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion, MotionConfig, AnimatePresence, animate, type MotionValue } from "motion/react";
 import {
   identity,
@@ -9,6 +9,12 @@ import {
   writings,
   photos,
   poemAnnotations,
+  bodyVersion,
+  cachedBody,
+  loadBody,
+  loadRecipeBodies,
+  onBodyLoaded,
+  type BodyKind,
   type Photo,
   type Release,
   type Track,
@@ -538,20 +544,6 @@ function FlightCrow({ night }: { night: boolean }) {
       return ((Math.round(verseEl.scrollLeft / b) % N) + N) % N;
     };
     const noteVerse = (active: number) => { if (!dep.done && active === 1 && versePoem() === 0) dep.seen = true; };
-    // THE CALL — the site's entire sound design: one low call at the moment of
-    // departure, from whichever bird is on duty (night read off the DOM, in
-    // lock-step with the lamp). By day a distant caw; at night the owl's "who".
-    // Created lazily; every failure mode (missing file, autoplay refusal, no
-    // Audio) is swallowed — the site behaves identically without the files.
-    const birdCall = () => {
-      const isNight = !!document.querySelector(".bof-root[data-night]");
-      try {
-        const call = new Audio(isNight ? "/owl-call.mp3" : "/crow-call.mp3");
-        call.volume = isNight ? 0.25 : 0.18;
-        call.onerror = () => {}; // 404: stay silent, no console spam
-        call.play().catch(() => {}); // autoplay policy may refuse: stay silent
-      } catch { /* stay silent */ }
-    };
     // a loop-back to Burnt Orange can happen without any page scroll — watch the
     // carousel itself so a sideways return still counts as having seen it.
     const onVerseScroll = () => noteVerse(activeStation());
@@ -633,7 +625,6 @@ function FlightCrow({ night }: { night: boolean }) {
       if (changed && prev === 1 && active === 2 && dep.seen && !dep.done) {
         dep.done = true;
         dep.away = true;
-        birdCall(); // the site's one sound — the on-duty bird's, quiet, may silently no-op
         if (!reduceRef.current) {
           const fwd = sx.get() >= 0 ? -1 : 1; // the way it faces (sx 1 looks left)
           // off-screen point above the top edge with a slight forward arc; a
@@ -1377,6 +1368,30 @@ function renderMarkdown(body: string): ReactNode[] {
   return out;
 }
 
+// ---- ordering a body --------------------------------------------------------
+// The prose isn't in the bundle any more: it comes out of the kitchen one plate
+// at a time. useBodiesLanded re-renders whoever is showing prose when a plate
+// arrives; useBody also puts the order in. Rows also prefetch on hover, so by
+// the time a click lands the body usually already has.
+const useBodiesLanded = () => useSyncExternalStore(onBodyLoaded, bodyVersion);
+
+function useBody(kind: BodyKind, slug: string | null): string | undefined {
+  useBodiesLanded();
+  useEffect(() => { if (slug) void loadBody(kind, slug); }, [kind, slug]);
+  return slug ? cachedBody(kind, slug) : undefined;
+}
+
+// a body still in flight. Rare enough to be theoretical on a warm connection,
+// but a panel should never open onto nothing
+function Plating() {
+  return <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.02rem", color: STONE, margin: 0 }}>plating…</p>;
+}
+
+// the sheet prints the recipes in full, so hold the print dialog until they're
+// in hand AND painted (a frame, not just a microtask). Normally both are true
+// before the guest reaches the colophon.
+const takeASheet = () => { void loadRecipeBodies().then(() => requestAnimationFrame(() => window.print())); };
+
 function Kicker({ children, color = OLIVE }: { children: ReactNode; color?: string }) {
   return <span style={{ fontFamily: LABEL, fontSize: "0.8rem", letterSpacing: "0.32em", textTransform: "uppercase", color }}>{children}</span>;
 }
@@ -1400,6 +1415,13 @@ export default function BillOfFare() {
   const [openWork, setOpenWork] = useState<string | null>("steddi");
   const [openWriting, setOpenWriting] = useState<string | null>(null);
   const [openRecipe, setOpenRecipe] = useState<string | null>(null);
+  // opening a row orders its body; these also keep the page subscribed, so a
+  // body that lands anywhere repaints the row that wanted it
+  useBody("writing", openWriting);
+  useBody("recipe", openRecipe);
+  // the printed sheet travels with the recipes in full and Ctrl-P waits for
+  // nobody — fetch the three of them the moment the room is up
+  useEffect(() => { void loadRecipeBodies(); }, []);
   const [loadedId, setLoadedId] = useState<string | null>(null);
   const [night, setNight] = useState(false);
   // LE MENU DÉGUSTATION — which course is on the table (null = no service)
@@ -1588,10 +1610,13 @@ export default function BillOfFare() {
           {writings.map((p) => {
             const isOpen = openWriting === p.slug;
             const panelId = `writing-panel-${p.slug}`;
-            const excerpt = p.body.replace(/^#.*$/gm, "").replace(/[#*`>-]/g, "").trim().slice(0, 150);
+            // once a body has been fetched it stays rendered, open or closed —
+            // the collapse needs something to collapse
+            const body = cachedBody("writing", p.slug);
+            const order = () => { void loadBody("writing", p.slug); };
             return (
               <div key={p.slug} style={{ borderBottom: `1px solid ${RULE}` }}>
-                <button onClick={() => setOpenWriting(isOpen ? null : p.slug)} className="menu-row"
+                <button onClick={() => setOpenWriting(isOpen ? null : p.slug)} onPointerEnter={order} onFocus={order} className="menu-row"
                   aria-expanded={isOpen} aria-controls={panelId}
                   style={{ width: "100%", display: "block", textAlign: "left", background: "transparent", border: "none", padding: "1.05rem 0.2rem", cursor: "pointer" }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem" }}>
@@ -1599,9 +1624,9 @@ export default function BillOfFare() {
                     <span aria-hidden style={{ flex: 1, borderBottom: `1px dotted ${LEADER}`, marginBottom: "0.3rem", minWidth: "1rem" }} />
                     <span style={{ fontFamily: LABEL, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", color: OLIVE, whiteSpace: "nowrap" }}>{p.date} · {p.readTime}</span>
                   </div>
-                  {!isOpen && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.05rem", color: STONE, marginTop: "0.25rem" }}>{excerpt}…</p>}
+                  {!isOpen && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.05rem", color: STONE, marginTop: "0.25rem" }}>{p.excerpt}…</p>}
                 </button>
-                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "66ch" }}>{renderMarkdown(p.body)}</div></Expand>
+                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "66ch" }}>{body ? renderMarkdown(body) : isOpen ? <Plating /> : null}</div></Expand>
               </div>
             );
           })}
@@ -1615,6 +1640,7 @@ export default function BillOfFare() {
           {recipes.map((r, ri) => {
             const isOpen = openRecipe === r.slug;
             const panelId = `recipe-panel-${r.slug}`;
+            const body = cachedBody("recipe", r.slug);
             return (
               <div key={r.slug} style={{ borderBottom: `1px solid ${RULE}` }}>
                 <button onClick={() => setOpenRecipe(isOpen ? null : r.slug)} className="menu-row"
@@ -1628,7 +1654,7 @@ export default function BillOfFare() {
                   </div>
                   {r.note && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.06rem", color: STONE, marginTop: "0.2rem" }}>{r.note}</p>}
                 </button>
-                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "62ch" }}>{renderMarkdown(r.body)}</div></Expand>
+                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "62ch" }}>{body ? renderMarkdown(body) : isOpen ? <Plating /> : null}</div></Expand>
               </div>
             );
           })}
@@ -1653,7 +1679,7 @@ export default function BillOfFare() {
             <div style={{ marginTop: "0.25rem" }}><Kicker color={OLIVE}>Proprietor · Est. {identity.est}</Kicker></div>
             {/* the kitchen offers the sheet itself. take one home */}
             <button
-              onClick={() => window.print()}
+              onClick={takeASheet}
               className="tasting-invite"
               style={{ display: "inline-block", background: "transparent", border: "none", padding: "0.1rem 0.2rem", marginTop: "0.55rem", cursor: "pointer", fontFamily: SCRIPT, fontSize: "1.75rem", lineHeight: 1, color: ACCENT, transform: "rotate(-2deg)" }}
             >
@@ -1705,9 +1731,11 @@ function Expand({ id, open, children }: { id?: string; open: boolean; children: 
   const [shut, setShut] = useState(!open);
   if (open && shut) setShut(false);
   // onAnimationComplete closes over the render that started the animation; a
-  // fast re-open would otherwise hide a panel that's on its way back up.
+  // fast re-open would otherwise hide a panel that's on its way back up. The
+  // ref is written on commit, not in render — it only has to beat the 0.34s
+  // animation, and writing it mid-render trips react-hooks/refs.
   const live = useRef(open);
-  live.current = open;
+  useEffect(() => { live.current = open; }, [open]);
   return (
     <motion.div
       id={id}
@@ -1923,8 +1951,8 @@ function VerseCarousel() {
             <div style={{ maxWidth: "46ch" }}>
               <h3 style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 500, fontSize: "clamp(2.1rem,4.4vw,3rem)", color: INK, lineHeight: 1.02, marginBottom: "1.3rem" }}>{v.title}</h3>
               <PoemBody poem={v} />
-              {v.analysis && (
-                <button onClick={() => setNotes(v)} style={{ marginTop: "1.3rem", display: "inline-block", background: "transparent", border: "none", padding: 0, cursor: "pointer", fontFamily: SCRIPT, fontSize: "1.7rem", lineHeight: 1, color: ACCENT }}>
+              {v.explication && (
+                <button onClick={() => setNotes(v)} onPointerEnter={() => { if (v.explication) void loadBody("explication", v.explication); }} style={{ marginTop: "1.3rem", display: "inline-block", background: "transparent", border: "none", padding: 0, cursor: "pointer", fontFamily: SCRIPT, fontSize: "1.7rem", lineHeight: 1, color: ACCENT }}>
                   explication de texte &rarr;
                 </button>
               )}
@@ -1946,8 +1974,9 @@ const MARBLE_URL = `url("data:image/svg+xml,${encodeURIComponent(MARBLE_SVG)}")`
 
 // GALLERY — the explication shown six different "notebook" ways; pick one
 function NotebookExplication({ poem, onClose }: { poem: (typeof verse)[number]; onClose: () => void }) {
-  const body = (poem.analysis || "").replace(/^#\s+.*(\n+|$)/, ""); // drop the doc's own H1
-  const notes = renderMarkdown(body);
+  const raw = useBody("explication", poem.explication ?? null);
+  const body = (raw || "").replace(/^#\s+.*(\n+|$)/, ""); // drop the doc's own H1
+  const notes = raw ? renderMarkdown(body) : null;
   const idx = verse.findIndex((v) => v.title === poem.title);
   const roman = ["i", "ii", "iii", "iv", "v", "vi"][idx] || "i";
   const greyRules = "repeating-linear-gradient(180deg, transparent 0 29px, rgba(96,82,58,0.18) 29px 30px)";
@@ -1980,7 +2009,7 @@ function NotebookExplication({ poem, onClose }: { poem: (typeof verse)[number]; 
           </div>
           <div style={{ flex: "1 1 380px", minWidth: 0, padding: "clamp(1.4rem,3vw,2.1rem)", backgroundImage: greyRules, backgroundPosition: "0 3.7rem", boxShadow: "inset 9px 0 14px -12px rgba(40,28,12,0.22)" }}>
             <Kicker color={ACCENT}>the notes</Kicker>
-            <div style={{ marginTop: "0.5rem" }}>{notes}</div>
+            <div style={{ marginTop: "0.5rem" }}>{notes ?? <Plating />}</div>
           </div>
         </div>
       </motion.div>
@@ -2019,7 +2048,7 @@ function EightTrackBody({ rel, spinning }: { rel: Release; spinning: boolean }) 
       ))}
       <div style={{ display: "flex", gap: "clamp(6px,1.4vw,11px)", height: "100%" }}>
         <div style={{ flex: "1 1 58%", position: "relative", borderRadius: 5, overflow: "hidden", boxShadow: "0 0 0 2px rgba(233,226,205,0.85), 0 2px 6px rgba(0,0,0,0.5)", background: "#1a1714" }}>
-          {rel.cover && <img src={rel.cover} alt={rel.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+          {rel.cover && <img src={rel.cover} alt={rel.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
           <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(118deg, rgba(255,255,255,0.22) 0 14%, rgba(255,255,255,0) 36%)" }} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "3px 7px", background: "linear-gradient(transparent,rgba(0,0,0,0.66))" }}>
             <span style={{ fontFamily: LABEL, fontSize: "0.56rem", letterSpacing: "0.16em", color: "#f1ead7" }}>STEREO 8</span>
@@ -2431,7 +2460,12 @@ const PRINT_NOTES: Record<string, string> = {
   "sun-over-canyon": "burnt orange was written here",
 };
 
-function AlbumPhoto({ p, onClick, w }: { p: Photo; onClick: () => void; w: number | string }) {
+// the album gets the small plate; the lightbox still orders off the full menu.
+// /photos/web/IMG_8205.jpg -> /photos/thumb/IMG_8205.webp, baked by
+// scripts/make-thumbs.mjs. derived, so photo rows stay one line each.
+const thumbOf = (src: string) => src.replace("/photos/web/", "/photos/thumb/").replace(/\.jpg$/, ".webp");
+
+function AlbumPhoto({ p, onClick, w, sizes }: { p: Photo; onClick: () => void; w: number | string; sizes: string }) {
   const ratio = p.ratio ?? ASPECT[p.aspect];
   const tilt = jitter(p.id + "a", 2.4);
   const note = PRINT_NOTES[p.id];
@@ -2446,7 +2480,10 @@ function AlbumPhoto({ p, onClick, w }: { p: Photo; onClick: () => void; w: numbe
       <Sway id={p.id + "sway"} amp={1.4}>
         <div style={{ background: "#fffdf6", padding: 6, boxShadow: "0 13px 18px -9px rgba(40,28,12,0.5), 0 2px 5px rgba(0,0,0,0.2)" }}>
           <div style={{ position: "relative", aspectRatio: String(ratio), overflow: "hidden", background: `linear-gradient(150deg, ${p.tone[0]}, ${p.tone[1]})` }}>
-            <img src={p.src} alt={p.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <picture style={{ display: "block", width: "100%", height: "100%" }}>
+              <source type="image/webp" srcSet={`${thumbOf(p.src)} ${p.ratio ? 1000 : 600}w`} sizes={sizes} />
+              <img src={p.src} alt={p.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </picture>
             {PHOTO_CORNERS.map((c, i) => (
               <span key={i} aria-hidden style={{ position: "absolute", ...c.pos, width: 15, height: 15, background: "rgba(44,31,16,0.8)", clipPath: c.clip }} />
             ))}
@@ -2477,7 +2514,7 @@ function PhotoAlbum({ onPhoto }: { onPhoto: (p: Photo) => void }) {
   };
   const row = (list: Photo[]) => (
     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start", gap: "clamp(1.5rem,3.2vw,2.6rem) clamp(1rem,2.4vw,2rem)" }}>
-      {list.map((p) => <AlbumPhoto key={p.id} p={p} w={printW(p)} onClick={() => onPhoto(p)} />)}
+      {list.map((p) => <AlbumPhoto key={p.id} p={p} w={printW(p)} sizes={printW(p)} onClick={() => onPhoto(p)} />)}
     </div>
   );
   return (
@@ -2505,7 +2542,7 @@ function PhotoAlbum({ onPhoto }: { onPhoto: (p: Photo) => void }) {
               {normal.length > 0 && row(normal)}
               {panos.map((p) => (
                 <div key={p.id} style={{ width: "min(820px,100%)", margin: "1.9rem auto 0", transform: `rotate(${jitter(p.id + "a", 0.7)}deg)` }}>
-                  <AlbumPhoto p={p} w="100%" onClick={() => onPhoto(p)} />
+                  <AlbumPhoto p={p} w="100%" sizes="min(820px,100vw)" onClick={() => onPhoto(p)} />
                 </div>
               ))}
               {lights.length > 0 && (
@@ -2659,6 +2696,9 @@ function TastingMenu({
     return recipes[idx];
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  // the amuse-bouche is one line lifted off the recipe, so the body has to be
+  // in hand. It is: the room ordered all three at first paint.
+  const amuse = useBody("recipe", recipePick?.slug ?? null);
 
   const exit = () => {
     if (startedTapeRef.current) fadeOutAudio(); // bow the music out; the tape stays loaded
@@ -2760,7 +2800,7 @@ function TastingMenu({
           </div>
         )}
         <div aria-hidden style={{ margin: "0.95rem 0", borderTop: "1px solid #d4d2cb" }} />
-        <p style={{ fontFamily: BODY, fontSize: "1rem", lineHeight: 1.7, color: "#43403a", margin: 0 }}>{amuseLine(recipePick.body)}</p>
+        <p style={{ fontFamily: BODY, fontSize: "1rem", lineHeight: 1.7, color: "#43403a", margin: 0, minHeight: "1.7rem" }}>{amuse ? amuseLine(amuse) : ""}</p>
         <div style={{ marginTop: "0.9rem", fontFamily: SCRIPT, fontSize: "1.5rem", lineHeight: 1, color: ACCENT }}>just a taste. the rest is downstairs</div>
       </div>
     ) : (
@@ -2864,8 +2904,11 @@ function TastingMenu({
 // mounted, display:none on screen; the @media print block at the end of
 // THEME_CSS hides the room and shows this instead. Ink stays literal (and the
 // theme vars are re-declared to ink in that block), so the sheet prints
-// ink-on-white whether or not the lamp was pulled. No hooks, no state — it
-// renders once from the live data; the recipes travel in full, the prints stay home.
+// ink-on-white whether or not the lamp was pulled. It renders from the live
+// data; the recipes travel in full, the prints stay home. Its one hook waits on
+// those recipe bodies, which arrive just after first paint rather than riding
+// into the bundle — the room orders them on mount and the print button holds
+// the dialog until they're plated.
 const P_INK = "#1c1a16";
 const P_BODY = "#2e2b25";
 const P_STONE = "#6b6557";
@@ -2874,6 +2917,7 @@ const P_RULE = "#d8d3c6";
 const P_LEADER = "#b3ac9d";
 
 function PrintMenu() {
+  useBodiesLanded();
   // the wall's clusters, in hanging order, counted from the live frames
   const clusters: { name: string; count: number }[] = [];
   for (const p of photos) {
@@ -2973,19 +3017,16 @@ function PrintMenu() {
 
       {/* ===== WRITING — the card, not the full pour ===== */}
       {course("On the Side", "Writing")}
-      {writings.map((p) => {
-        const excerpt = p.body.replace(/^#.*$/gm, "").replace(/[#*`>-]/g, "").trim().slice(0, 150);
-        return (
-          <div key={p.slug} className="pm-item" style={{ margin: "0 0 10pt" }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "6pt" }}>
-              <span style={{ fontFamily: DISPLAY, fontSize: "12.5pt", color: P_INK }}>{p.title}</span>
-              {leader()}
-              <span style={{ fontFamily: LABEL, fontSize: "8.5pt", letterSpacing: "0.12em", textTransform: "uppercase", color: P_OLIVE, whiteSpace: "nowrap" }}>{p.date} · {p.readTime}</span>
-            </div>
-            <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "10.5pt", color: P_STONE, margin: "2pt 0 0" }}>{excerpt}…</p>
+      {writings.map((p) => (
+        <div key={p.slug} className="pm-item" style={{ margin: "0 0 10pt" }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: "6pt" }}>
+            <span style={{ fontFamily: DISPLAY, fontSize: "12.5pt", color: P_INK }}>{p.title}</span>
+            {leader()}
+            <span style={{ fontFamily: LABEL, fontSize: "8.5pt", letterSpacing: "0.12em", textTransform: "uppercase", color: P_OLIVE, whiteSpace: "nowrap" }}>{p.date} · {p.readTime}</span>
           </div>
-        );
-      })}
+          <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "10.5pt", color: P_STONE, margin: "2pt 0 0" }}>{p.excerpt}…</p>
+        </div>
+      ))}
       {aside("served in full at the house")}
 
       {/* ===== KITCHEN — the recipes in full; the cookable half of the artifact ===== */}
@@ -2998,7 +3039,7 @@ function PrintMenu() {
             {r.serves && <span style={{ fontFamily: LABEL, fontSize: "8.5pt", letterSpacing: "0.12em", textTransform: "uppercase", color: P_OLIVE }}>serves {r.serves}</span>}
           </div>
           {r.note && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "10.5pt", color: P_STONE, margin: "2pt 0 6pt" }}>{r.note}</p>}
-          <div style={{ maxWidth: "68ch" }}>{renderMarkdown(r.body)}</div>
+          <div style={{ maxWidth: "68ch" }}>{renderMarkdown(cachedBody("recipe", r.slug) ?? "")}</div>
         </article>
       ))}
 
