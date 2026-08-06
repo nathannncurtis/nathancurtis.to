@@ -230,11 +230,14 @@ function PaperGrain() {
 // the lamp's pull-chain — tug it and the room falls into warm lamplight
 function LampPull({ night, onToggle }: { night: boolean; onToggle: () => void }) {
   return (
-    <div aria-hidden style={{ position: "fixed", top: 0, right: "clamp(18px,6vw,72px)", zIndex: 30, display: "flex", flexDirection: "column", alignItems: "center", pointerEvents: "none" }}>
+    // only the fitting is scenery — the chain itself is a control, so it can't
+    // sit inside an aria-hidden wrapper or the lamp goes undiscoverable.
+    <div style={{ position: "fixed", top: 0, right: "clamp(18px,6vw,72px)", zIndex: 30, display: "flex", flexDirection: "column", alignItems: "center", pointerEvents: "none" }}>
       {/* ceiling rosette */}
-      <div style={{ width: 30, height: 11, background: "linear-gradient(#3b342a,#211c15)", borderRadius: "0 0 6px 6px", boxShadow: "0 2px 5px rgba(0,0,0,0.35)" }} />
+      <div aria-hidden style={{ width: 30, height: 11, background: "linear-gradient(#3b342a,#211c15)", borderRadius: "0 0 6px 6px", boxShadow: "0 2px 5px rgba(0,0,0,0.35)" }} />
       {/* the bulb — glows warm once the lamp is on */}
       <motion.div
+        aria-hidden
         className="lamp-bulb-breath"
         animate={{ opacity: night ? 1 : 0.5, boxShadow: night ? "0 0 30px 12px rgba(255,196,110,0.55)" : "0 0 0 0 rgba(255,196,110,0)" }}
         transition={{ duration: 0.55 }}
@@ -244,10 +247,11 @@ function LampPull({ night, onToggle }: { night: boolean; onToggle: () => void })
       <motion.div style={{ transformOrigin: "top center", display: "flex", flexDirection: "column", alignItems: "center" }}
         animate={{ rotate: [0, 1.7, 0, -1.7, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}>
         <motion.button onClick={onToggle} title={night ? "back to daylight" : "pull the lamp on"}
+          aria-label="lamplight" aria-pressed={night}
           whileTap={{ y: 11 }} whileHover={{ y: 3 }}
           style={{ pointerEvents: "auto", background: "transparent", border: "none", padding: "1px 18px 24px", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <span style={{ width: 3, height: "clamp(46px,10vh,92px)", background: "repeating-linear-gradient(180deg,#d3bd87 0 2px,#7c6638 2px 5px)" }} />
-          <span style={{ width: 12, height: 12, borderRadius: "50%", background: "radial-gradient(circle at 35% 30%,#f3e1ad,#9a7e3d)", boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.55)" }} />
+          <span aria-hidden style={{ width: 3, height: "clamp(46px,10vh,92px)", background: "repeating-linear-gradient(180deg,#d3bd87 0 2px,#7c6638 2px 5px)" }} />
+          <span aria-hidden style={{ width: 12, height: 12, borderRadius: "50%", background: "radial-gradient(circle at 35% 30%,#f3e1ad,#9a7e3d)", boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.55)" }} />
         </motion.button>
       </motion.div>
     </div>
@@ -1368,7 +1372,7 @@ function renderMarkdown(body: string): ReactNode[] {
     else if (t.startsWith("# ")) out.push(<h3 key={i} style={{ fontFamily: DISPLAY, fontStyle: "italic", fontWeight: 500, fontSize: "1.9rem", color: INK, margin: "0.2rem 0 0.8rem" }}>{t.slice(2)}</h3>);
     else if (/^\d+\.\s/.test(t)) out.push(<ol key={i} style={{ margin: "0.5rem 0 1rem 1.3rem", display: "grid", gap: "0.45rem", listStyle: "decimal" }}>{t.split(/\n(?=\d+\.\s)/).map((it, j) => <li key={j} style={{ fontFamily: BODY, fontSize: "1.02rem", lineHeight: 1.7, color: "var(--body)" }} dangerouslySetInnerHTML={{ __html: inline(it.replace(/^\d+\.\s/, "")) }} />)}</ol>);
     else if (t.startsWith("- ")) out.push(<ul key={i} style={{ margin: "0.5rem 0 1rem", display: "grid", gap: "0.35rem" }}>{t.split("\n- ").map((s, k) => (k === 0 ? s.slice(2) : s)).map((it, j) => <li key={j} style={{ display: "flex", gap: "0.6rem", fontFamily: BODY, fontSize: "1.02rem", lineHeight: 1.7, color: "var(--body)" }}><span style={{ color: ACCENT }}>·</span><span dangerouslySetInnerHTML={{ __html: inline(it) }} /></li>)}</ul>);
-    else out.push(<p key={i} style={{ fontFamily: BODY, fontSize: "1.06rem", lineHeight: 1.8, color: "#43403a", margin: "0 0 0.9rem" }} dangerouslySetInnerHTML={{ __html: inline(t) }} />);
+    else out.push(<p key={i} style={{ fontFamily: BODY, fontSize: "1.06rem", lineHeight: 1.8, color: "var(--body)", margin: "0 0 0.9rem" }} dangerouslySetInnerHTML={{ __html: inline(t) }} />);
   });
   return out;
 }
@@ -1544,9 +1548,11 @@ export default function BillOfFare() {
         <div data-perch="works" style={{ borderTop: `1px solid ${RULE}` }}>
           {works.map((w) => {
             const isOpen = openWork === w.id;
+            const panelId = `work-panel-${w.id}`;
             return (
               <div key={w.id} style={{ borderBottom: `1px solid ${RULE}` }}>
                 <button onClick={() => setOpenWork(isOpen ? null : w.id)} className="menu-row"
+                  aria-expanded={isOpen} aria-controls={panelId}
                   style={{ width: "100%", display: "flex", alignItems: "baseline", gap: "0.6rem", flexWrap: "wrap", background: "transparent", border: "none", padding: "1.05rem 0.2rem", cursor: "pointer", textAlign: "left" }}>
                   <span style={{ fontFamily: DISPLAY, fontSize: w.featured ? "1.8rem" : "1.45rem", color: INK }}>{w.name}</span>
                   {w.featured && <span style={{ fontFamily: LABEL, fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: ACCENT, border: `1px solid ${ACCENT}`, borderRadius: 2, padding: "1px 6px" }}>Featured</span>}
@@ -1554,7 +1560,7 @@ export default function BillOfFare() {
                   <span aria-hidden style={{ flex: 1, borderBottom: `1px dotted ${LEADER}`, marginBottom: "0.3rem", minWidth: "1.5rem" }} />
                   <span style={{ fontFamily: LABEL, fontSize: "0.92rem", color: OLIVE }}>{w.year}</span>
                 </button>
-                <Expand open={isOpen}>
+                <Expand id={panelId} open={isOpen}>
                   <div style={{ padding: "0 0.2rem 1.5rem", maxWidth: "62ch" }}>
                     <p style={{ fontFamily: BODY, fontSize: "1.05rem", lineHeight: 1.8, color: "var(--body)" }}>{w.detail}</p>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center", marginTop: "0.9rem" }}>
@@ -1581,10 +1587,12 @@ export default function BillOfFare() {
         <div data-perch="writing" style={{ borderTop: `1px solid ${RULE}` }}>
           {writings.map((p) => {
             const isOpen = openWriting === p.slug;
+            const panelId = `writing-panel-${p.slug}`;
             const excerpt = p.body.replace(/^#.*$/gm, "").replace(/[#*`>-]/g, "").trim().slice(0, 150);
             return (
               <div key={p.slug} style={{ borderBottom: `1px solid ${RULE}` }}>
                 <button onClick={() => setOpenWriting(isOpen ? null : p.slug)} className="menu-row"
+                  aria-expanded={isOpen} aria-controls={panelId}
                   style={{ width: "100%", display: "block", textAlign: "left", background: "transparent", border: "none", padding: "1.05rem 0.2rem", cursor: "pointer" }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem" }}>
                     <span style={{ fontFamily: DISPLAY, fontSize: "1.4rem", color: INK, lineHeight: 1.15 }}>{p.title}</span>
@@ -1593,7 +1601,7 @@ export default function BillOfFare() {
                   </div>
                   {!isOpen && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.05rem", color: STONE, marginTop: "0.25rem" }}>{excerpt}…</p>}
                 </button>
-                <Expand open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "66ch" }}>{renderMarkdown(p.body)}</div></Expand>
+                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "66ch" }}>{renderMarkdown(p.body)}</div></Expand>
               </div>
             );
           })}
@@ -1606,9 +1614,11 @@ export default function BillOfFare() {
         <div data-perch="kitchen" style={{ borderTop: `1px solid ${RULE}` }}>
           {recipes.map((r, ri) => {
             const isOpen = openRecipe === r.slug;
+            const panelId = `recipe-panel-${r.slug}`;
             return (
               <div key={r.slug} style={{ borderBottom: `1px solid ${RULE}` }}>
                 <button onClick={() => setOpenRecipe(isOpen ? null : r.slug)} className="menu-row"
+                  aria-expanded={isOpen} aria-controls={panelId}
                   style={{ width: "100%", display: "block", textAlign: "left", background: "transparent", border: "none", padding: "1.05rem 0.2rem", cursor: "pointer" }}>
                   <div style={{ display: "flex", alignItems: "baseline", gap: "0.6rem" }}>
                     {ri === 0 && <InkStar size={18} color={ACCENT} style={{ alignSelf: "center", flexShrink: 0, marginRight: "-0.2rem" }} />}
@@ -1618,7 +1628,7 @@ export default function BillOfFare() {
                   </div>
                   {r.note && <p style={{ fontFamily: ITEM, fontStyle: "italic", fontSize: "1.06rem", color: STONE, marginTop: "0.2rem" }}>{r.note}</p>}
                 </button>
-                <Expand open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "62ch" }}>{renderMarkdown(r.body)}</div></Expand>
+                <Expand id={panelId} open={isOpen}><div style={{ padding: "0 0.2rem 1.6rem", maxWidth: "62ch" }}>{renderMarkdown(r.body)}</div></Expand>
               </div>
             );
           })}
@@ -1686,9 +1696,28 @@ function Section({ id, bg, children, decoration }: { id: string; bg: string; chi
 }
 
 // ---- height expander (one click, in place) ---------------------------------
-function Expand({ open, children }: { open: boolean; children: ReactNode }) {
+// height:0 hides a panel from eyes only — the links inside stay tabbable and a
+// screen reader still reads every closed essay end to end. So a shut panel also
+// takes `hidden`, but strictly at either edge of the animation: off in the same
+// render that opens it (there must be a box to measure), on only once the close
+// has finished, or the panel would blink shut instead of easing.
+function Expand({ id, open, children }: { id?: string; open: boolean; children: ReactNode }) {
+  const [shut, setShut] = useState(!open);
+  if (open && shut) setShut(false);
+  // onAnimationComplete closes over the render that started the animation; a
+  // fast re-open would otherwise hide a panel that's on its way back up.
+  const live = useRef(open);
+  live.current = open;
   return (
-    <motion.div initial={false} animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }} transition={{ duration: 0.34, ease }} style={{ overflow: "hidden" }}>
+    <motion.div
+      id={id}
+      hidden={shut}
+      initial={false}
+      animate={{ height: open ? "auto" : 0, opacity: open ? 1 : 0 }}
+      transition={{ duration: 0.34, ease }}
+      onAnimationComplete={() => { if (!live.current) setShut(true); }}
+      style={{ overflow: "hidden" }}
+    >
       {children}
     </motion.div>
   );
@@ -2278,18 +2307,22 @@ function MusicRoom({ releases, loadedId, playing, onInsert, onEject, onToggle, l
               {releases.map((rel) => {
                 const inDeck = rel.id === loadedId;
                 return (
-                  <div
+                  // a real button: the drag is the flourish, the press is the way in.
+                  // Chrome stripped back to nothing so it still reads as a tape on a shelf.
+                  <button
                     key={rel.id}
+                    type="button"
                     draggable={!inDeck}
                     onDragStart={(e) => { e.dataTransfer.setData("text/plain", rel.id); e.dataTransfer.effectAllowed = "move"; }}
                     onClick={() => (inDeck ? onEject() : onInsert(rel))}
                     title={inDeck ? "in the deck" : "drag me into the deck, or just click"}
-                    style={{ width: isEP(rel) ? "clamp(168px,27vw,232px)" : "clamp(126px,20vw,178px)", cursor: inDeck ? "default" : "grab", opacity: inDeck ? 0.26 : 1, transform: `rotate(${jitter(rel.id, 3)}deg)`, transformOrigin: "bottom center", transition: "opacity 0.2s, transform 0.18s", filter: "drop-shadow(3px 13px 8px rgba(20,12,4,0.45))" }}
+                    aria-label={inDeck ? `Eject ${rel.title} from the deck` : `Load ${rel.title} into the deck`}
+                    style={{ appearance: "none", background: "transparent", border: "none", padding: 0, font: "inherit", color: "inherit", textAlign: "inherit", display: "block", width: isEP(rel) ? "clamp(168px,27vw,232px)" : "clamp(126px,20vw,178px)", cursor: inDeck ? "default" : "grab", opacity: inDeck ? 0.26 : 1, transform: `rotate(${jitter(rel.id, 3)}deg)`, transformOrigin: "bottom center", transition: "opacity 0.2s, transform 0.18s", filter: "drop-shadow(3px 13px 8px rgba(20,12,4,0.45))" }}
                   >
                     <Sway id={rel.id} amp={1.3}>
                       {isEP(rel) ? <EightTrackBody rel={rel} spinning={false} /> : <CassetteBody rel={rel} spinning={false} />}
                     </Sway>
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -2351,7 +2384,7 @@ function MusicRoom({ releases, loadedId, playing, onInsert, onEject, onToggle, l
                   {loaded.tracks.map((t, i) => {
                     const isP = playing === t.title;
                     return (
-                      <button key={t.title} onClick={() => onToggle(t)} style={{ width: "100%", display: "flex", alignItems: "baseline", gap: "0.7rem", background: isP ? "rgba(168,85,31,0.07)" : "transparent", border: "none", borderBottom: `1px solid ${RULE}`, padding: "0.5rem 0.3rem", cursor: "pointer", textAlign: "left" }}>
+                      <button key={t.title} onClick={() => onToggle(t)} aria-pressed={isP} style={{ width: "100%", display: "flex", alignItems: "baseline", gap: "0.7rem", background: isP ? "rgba(168,85,31,0.07)" : "transparent", border: "none", borderBottom: `1px solid ${RULE}`, padding: "0.5rem 0.3rem", cursor: "pointer", textAlign: "left" }}>
                         <span style={{ fontFamily: LABEL, fontSize: "0.7rem", color: isP ? ACCENT : LEADER, width: "1.4rem" }}>{i + 1}</span>
                         <span style={{ fontFamily: ITEM, fontSize: "1.2rem", color: isP ? ACCENT : INK, fontStyle: isP ? "italic" : "normal", whiteSpace: "nowrap" }}>{t.title}</span>
                         <span aria-hidden style={{ flex: 1, borderBottom: `1px dotted ${LEADER}`, marginBottom: "0.22rem", minWidth: "1rem" }} />
@@ -2420,7 +2453,7 @@ function AlbumPhoto({ p, onClick, w }: { p: Photo; onClick: () => void; w: numbe
           </div>
         </div>
         <div style={{ textAlign: "center", marginTop: "0.35rem", lineHeight: 0.9 }}>
-          <span style={{ fontFamily: SCRIPT, fontSize: "1.55rem", color: "#3c352a" }}>{p.title}</span>
+          <span style={{ fontFamily: SCRIPT, fontSize: "1.55rem", color: INK }}>{p.title}</span>
           <span style={{ fontFamily: LABEL, fontSize: "0.56rem", letterSpacing: "0.14em", color: OLIVE, marginLeft: "0.45rem" }}>{p.year}</span>
         </div>
         {note && (
@@ -2477,7 +2510,7 @@ function PhotoAlbum({ onPhoto }: { onPhoto: (p: Photo) => void }) {
               ))}
               {lights.length > 0 && (
                 <div style={{ marginTop: "2.1rem" }}>
-                  <div style={{ fontFamily: SCRIPT, fontSize: "2rem", color: ACCENT_DEEP, transform: "rotate(-2deg)", marginBottom: "0.5rem" }}>the lights</div>
+                  <div style={{ fontFamily: SCRIPT, fontSize: "2rem", color: OLIVE, transform: "rotate(-2deg)", marginBottom: "0.5rem" }}>the lights</div>
                   {row(lights)}
                 </div>
               )}
