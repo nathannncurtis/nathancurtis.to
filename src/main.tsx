@@ -9,7 +9,12 @@ createRoot(document.getElementById('root')!).render(
   </StrictMode>,
 )
 
-// Fade in once fonts settle — with a hard fallback so the page never stays hidden
+// Fade in once the display face is in. document.fonts.ready waits on every
+// weight of all five families — a whole second of held-back paint to dodge one
+// swap — so ask for the one face the first screen sets in large type, and cap
+// the wait at 350ms. The bare setTimeout is unconditional: the page can never
+// stay hidden.
 const reveal = () => document.getElementById('root')?.classList.add('ready')
-document.fonts.ready.then(() => requestAnimationFrame(reveal))
-setTimeout(reveal, 1200)
+const revealNextFrame = () => requestAnimationFrame(reveal)
+document.fonts.load('1em Cormorant').then(revealNextFrame, revealNextFrame)
+setTimeout(reveal, 350)
