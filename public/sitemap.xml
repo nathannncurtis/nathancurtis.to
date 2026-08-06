@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  One entry, and that is correct. This is a single-page site: every course is
+  served from / and reached by a #fragment or the decorative ?seat, neither of
+  which is a URL a crawler indexes separately. Padding this file with fragments
+  would invent pages that do not exist. Bump lastmod when the menu changes.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://nathancurtis.to/</loc>
+    <lastmod>2026-08-05</lastmod>
+  </url>
+</urlset>
