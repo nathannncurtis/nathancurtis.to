@@ -1990,7 +1990,7 @@ function EightTrackBody({ rel, spinning }: { rel: Release; spinning: boolean }) 
       ))}
       <div style={{ display: "flex", gap: "clamp(6px,1.4vw,11px)", height: "100%" }}>
         <div style={{ flex: "1 1 58%", position: "relative", borderRadius: 5, overflow: "hidden", boxShadow: "0 0 0 2px rgba(233,226,205,0.85), 0 2px 6px rgba(0,0,0,0.5)", background: "#1a1714" }}>
-          {rel.cover && <img src={rel.cover} alt={rel.title} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
+          {rel.cover && <img src={rel.cover} alt={rel.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
           <div aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(118deg, rgba(255,255,255,0.22) 0 14%, rgba(255,255,255,0) 36%)" }} />
           <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "3px 7px", background: "linear-gradient(transparent,rgba(0,0,0,0.66))" }}>
             <span style={{ fontFamily: LABEL, fontSize: "0.56rem", letterSpacing: "0.16em", color: "#f1ead7" }}>STEREO 8</span>
@@ -2398,7 +2398,12 @@ const PRINT_NOTES: Record<string, string> = {
   "sun-over-canyon": "burnt orange was written here",
 };
 
-function AlbumPhoto({ p, onClick, w }: { p: Photo; onClick: () => void; w: number | string }) {
+// the album gets the small plate; the lightbox still orders off the full menu.
+// /photos/web/IMG_8205.jpg -> /photos/thumb/IMG_8205.webp, baked by
+// scripts/make-thumbs.mjs. derived, so photo rows stay one line each.
+const thumbOf = (src: string) => src.replace("/photos/web/", "/photos/thumb/").replace(/\.jpg$/, ".webp");
+
+function AlbumPhoto({ p, onClick, w, sizes }: { p: Photo; onClick: () => void; w: number | string; sizes: string }) {
   const ratio = p.ratio ?? ASPECT[p.aspect];
   const tilt = jitter(p.id + "a", 2.4);
   const note = PRINT_NOTES[p.id];
@@ -2413,7 +2418,10 @@ function AlbumPhoto({ p, onClick, w }: { p: Photo; onClick: () => void; w: numbe
       <Sway id={p.id + "sway"} amp={1.4}>
         <div style={{ background: "#fffdf6", padding: 6, boxShadow: "0 13px 18px -9px rgba(40,28,12,0.5), 0 2px 5px rgba(0,0,0,0.2)" }}>
           <div style={{ position: "relative", aspectRatio: String(ratio), overflow: "hidden", background: `linear-gradient(150deg, ${p.tone[0]}, ${p.tone[1]})` }}>
-            <img src={p.src} alt={p.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <picture style={{ display: "block", width: "100%", height: "100%" }}>
+              <source type="image/webp" srcSet={`${thumbOf(p.src)} ${p.ratio ? 1000 : 600}w`} sizes={sizes} />
+              <img src={p.src} alt={p.title} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </picture>
             {PHOTO_CORNERS.map((c, i) => (
               <span key={i} aria-hidden style={{ position: "absolute", ...c.pos, width: 15, height: 15, background: "rgba(44,31,16,0.8)", clipPath: c.clip }} />
             ))}
@@ -2444,7 +2452,7 @@ function PhotoAlbum({ onPhoto }: { onPhoto: (p: Photo) => void }) {
   };
   const row = (list: Photo[]) => (
     <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "flex-start", gap: "clamp(1.5rem,3.2vw,2.6rem) clamp(1rem,2.4vw,2rem)" }}>
-      {list.map((p) => <AlbumPhoto key={p.id} p={p} w={printW(p)} onClick={() => onPhoto(p)} />)}
+      {list.map((p) => <AlbumPhoto key={p.id} p={p} w={printW(p)} sizes={printW(p)} onClick={() => onPhoto(p)} />)}
     </div>
   );
   return (
@@ -2472,7 +2480,7 @@ function PhotoAlbum({ onPhoto }: { onPhoto: (p: Photo) => void }) {
               {normal.length > 0 && row(normal)}
               {panos.map((p) => (
                 <div key={p.id} style={{ width: "min(820px,100%)", margin: "1.9rem auto 0", transform: `rotate(${jitter(p.id + "a", 0.7)}deg)` }}>
-                  <AlbumPhoto p={p} w="100%" onClick={() => onPhoto(p)} />
+                  <AlbumPhoto p={p} w="100%" sizes="min(820px,100vw)" onClick={() => onPhoto(p)} />
                 </div>
               ))}
               {lights.length > 0 && (
