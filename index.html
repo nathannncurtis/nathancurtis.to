@@ -8,24 +8,78 @@
     <meta name="author" content="Nathan Curtis" />
     <meta name="theme-color" content="#f8f4ea" />
 
+    <!-- One table, one address. The whole house is served from /; the ?seat and
+         the #fragments are seating, not pages. Trailing slash to match what the
+         apex 301 already hands back. -->
+    <link rel="canonical" href="https://nathancurtis.to/" />
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="À la Carte" />
     <meta property="og:title" content="À la Carte · Nathan Curtis" />
     <meta property="og:description" content="Poems, photographs, music, software, essays, and the odd good meal. All of it, in one place." />
     <meta property="og:image" content="https://nathancurtis.to/og.png" />
-    <meta property="og:url" content="https://nathancurtis.to" />
+    <meta property="og:image:alt" content="A cream menu card. Maison NC, est. MMXXIV, sits above the title À la Carte in large serif, with the house of Curtis beneath it and a line of courses: poems, photographs, music, software, essays, recipes." />
+    <meta property="og:url" content="https://nathancurtis.to/" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="À la Carte · Nathan Curtis" />
     <meta name="twitter:description" content="Poems, photographs, music, software, essays, and the odd good meal. All of it, in one place." />
     <meta name="twitter:image" content="https://nathancurtis.to/og.png" />
+    <meta name="twitter:image:alt" content="A cream menu card. Maison NC, est. MMXXIV, sits above the title À la Carte in large serif, with the house of Curtis beneath it and a line of courses: poems, photographs, music, software, essays, recipes." />
 
     <!-- Favicon: the crow, everywhere. ico for Safari and old caches, svg for
          the rest, touch icon for home screens. v=2 evicts the old icon. -->
     <link rel="icon" href="/favicon.ico?v=2" sizes="48x48" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Static head, so crawlers get this before any JS runs. Person and WebSite
+         only: there are no per-piece URLs to hang an Article on, and no dish
+         photographs, so no Recipe either. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://nathancurtis.to/#nathan",
+            "name": "Nathan Curtis",
+            "url": "https://nathancurtis.to/",
+            "description": "I make things across whatever medium holds my attention: photographs, poems, essays, music, software, the occasional ambitious dinner. This is all of it, in one place.",
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://nathancurtis.to/sig.png",
+              "width": 522,
+              "height": 188,
+              "caption": "Nathan Curtis, signed"
+            },
+            "sameAs": [
+              "https://github.com/nathannncurtis"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://nathancurtis.to/#site",
+            "name": "À la Carte",
+            "alternateName": "À la Carte · Nathan Curtis",
+            "url": "https://nathancurtis.to/",
+            "description": "Poems, photographs, music, software, essays, and the odd good meal. The house of Curtis, all of it in one place. Order anything, in any order.",
+            "alternativeHeadline": "Pictures, poems, songs, software, and the odd good meal.",
+            "inLanguage": "en",
+            "image": {
+              "@type": "ImageObject",
+              "url": "https://nathancurtis.to/og.png",
+              "width": 1200,
+              "height": 630
+            },
+            "author": { "@id": "https://nathancurtis.to/#nathan" },
+            "publisher": { "@id": "https://nathancurtis.to/#nathan" }
+          }
+        ]
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
