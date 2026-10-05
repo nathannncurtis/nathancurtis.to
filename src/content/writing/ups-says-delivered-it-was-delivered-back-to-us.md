@@ -8,10 +8,10 @@ tags: ["Python", "UPS API", "Data Quality"]
 The office ships records to law firms by UPS, and I keep a ledger of every package: a service that polls the UPS Tracking API and stores the raw JSON for each box in SQLite. In September I turned on the other direction. When UPS picks a box up, hits an exception, or delivers it, the ledger posts a note onto each order line that shipped in that box, in the vendor's job system. Pickup and exception notes are internal. The delivery note is the one a client can see:
 
 ```
-Delivered by UPS 06/05/2026 4:01 PM. Signed for by Sam at Front Desk.
+Delivered by UPS 06/05/2026 4:01 PM. Signed for by [name] at Front Desk.
 ```
 
-(The signer names and order numbers in this post are made up, and I've left the tracking numbers out. The codes, wording and scan times for the returned boxes are what UPS sent.)
+(The order numbers in this post are made up, and I've taken out the signer's name and the tracking numbers. The codes, wording and scan times for the returned boxes are what UPS sent.)
 
 The cutover was September 1, so boxes shipped in August had no notes. I backfilled the month. The first pass staged 2,954 notes; 798 got through before the vendor's API started answering `429`, and 2,156 bounced. I added a backoff, paced the posts at four a second, and reran it. With the 236 notes September had already produced, the log stood at 3,190 notes, 0 failed.
 
@@ -19,9 +19,9 @@ Then I opened one order to spot-check it, one I already knew was in trouble. UPS
 
 ## The order that looked wrong
 
-The first thing I noticed was that the "receiver has moved" note was on the order twice, and I thought the backfill might have run twice. It hadn't. The real problem was a few notes further down: Delivered by UPS, signed for by Pat at Front Desk.
+The first thing I noticed was that the "receiver has moved" note was on the order twice, and I thought the backfill might have run twice. It hadn't. The real problem was a few notes further down: Delivered by UPS, signed for at Front Desk.
 
-Pat works at our front desk.
+That front desk is ours.
 
 Here is the part of UPS's response for that box that matters:
 
@@ -29,7 +29,7 @@ Here is the part of UPS's response for that box that matters:
 "currentStatus": {"description": "Returned to Sender", "code": "034"},
 "deliveryDate": [{"type": "DEL", "date": "20260827"}],
 "deliveryTime": {"type": "DEL", "endTime": "105433"},
-"deliveryInformation": {"receivedBy": "PAT", "location": "Front Desk"},
+"deliveryInformation": {"receivedBy": "[name]", "location": "Front Desk"},
 "activity": [
   {"date": "20260827", "time": "105433",
    "status": {"type": "D", "code": "UA", "description": "Package was returned to the sender "}},
@@ -60,10 +60,10 @@ I wrote a read-only script that joined every posted `delivered` row back to its 
 
 ```
 4 mis-posted delivered notes:
-  OPP123456-02   Delivered by UPS 08/10/2026 12:05 PM. Signed for by Pat at Front Desk.
-  OPP234567-03   Delivered by UPS 08/27/2026 10:54 AM. Signed for by Pat at Front Desk.
-  OPP234567-08   Delivered by UPS 08/27/2026 10:54 AM. Signed for by Pat at Front Desk.
-  OPP234567-11   Delivered by UPS 08/27/2026 10:54 AM. Signed for by Pat at Front Desk.
+  OPP123456-02   Delivered by UPS 08/10/2026 12:05 PM. Signed for by [name] at Front Desk.
+  OPP234567-03   Delivered by UPS 08/27/2026 10:54 AM. Signed for by [name] at Front Desk.
+  OPP234567-08   Delivered by UPS 08/27/2026 10:54 AM. Signed for by [name] at Front Desk.
+  OPP234567-11   Delivered by UPS 08/27/2026 10:54 AM. Signed for by [name] at Front Desk.
 ```
 
 Two boxes, two orders, four notes. One of the boxes carried three lines of the same order, and each line got its own note. No other posted delivery matched.
